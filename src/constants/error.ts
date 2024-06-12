@@ -1,0 +1,1 @@
+export const ErrorResponse = "Error/";

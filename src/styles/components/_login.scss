@@ -1,0 +1,17 @@
+.login-input {
+	&:focus + label {
+		@apply -top-3;
+
+		transition: top .3s ease;
+	}
+
+	&:not(:focus) + label {
+		@apply top-1/2;
+
+		transition: top .3s ease;
+	}
+
+	&:not(:placeholder-shown):not(:focus) + label {
+		@apply -top-3;
+	}
+}
