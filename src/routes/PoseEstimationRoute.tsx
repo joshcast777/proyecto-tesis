@@ -32,7 +32,8 @@ export default function PoseEstimationRoute(): React.ReactNode {
 
 				<Route path="/auth" element={<LoginForm />} />
 				<Route path="/admin-dashboard" element={<AdminDashboard />} />
-				<Route path="/" element={<Navigate to="/admin-dashboard" />} />
+
+				<Route path="" element={<Navigate to="/admin-dashboard" />} />
 				{/* <Route path="/app" element={<Navigate to="/app/dashboard" />} />
 				<Route path="/dashboard" element={<Navigate to="/app/dashboard" />} />
 				<Route path="/companies" element={<Navigate to="/app/companies" />} />
