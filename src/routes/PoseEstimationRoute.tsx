@@ -8,9 +8,8 @@ export default function PoseEstimationRoute(): React.ReactNode {
 	// const { isAuthenticated } = authStore();
 
 	return (
-		<BrowserRouter>
-			<Routes>
-				{/* <Route
+		<Routes>
+			{/* <Route
 					path="/auth"
 					element={
 						<PublicRoute redirectTo="/admin-dashboard" isAuthenticated={isAuthenticated}>
@@ -30,16 +29,15 @@ export default function PoseEstimationRoute(): React.ReactNode {
 					}
 				/> */}
 
-				<Route path="/auth" element={<LoginForm />} />
-				<Route path="/admin-dashboard" element={<AdminDashboard />} />
+			<Route path="/auth" element={<LoginForm />} />
+			<Route path="/admin-dashboard" element={<AdminDashboard />} />
 
-				<Route path="" element={<Navigate to="/admin-dashboard" />} />
-				{/* <Route path="/app" element={<Navigate to="/app/dashboard" />} />
+			<Route path="" element={<Navigate to="/admin-dashboard" />} />
+			{/* <Route path="/app" element={<Navigate to="/app/dashboard" />} />
 				<Route path="/dashboard" element={<Navigate to="/app/dashboard" />} />
 				<Route path="/companies" element={<Navigate to="/app/companies" />} />
 
 				<Route path="/" element={<Navigate to="/auth" />} /> */}
-			</Routes>
-		</BrowserRouter>
+		</Routes>
 	);
 }
