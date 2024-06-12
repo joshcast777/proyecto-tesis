@@ -3,7 +3,7 @@
  */
 
 // import { authStore } from "@/store";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 // import { PrivateRoute, PublicRoute } from "./components/AccesRoutes";
 import { LoginForm } from "@/views";
 import AdminDashboard from "@/views/Dashboard/AdminDashboard";
