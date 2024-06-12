@@ -1,3 +1,7 @@
+/**
+ * Cambio
+ */
+
 // import { authStore } from "@/store";
 import { Navigate, Route, Routes } from "react-router-dom";
 // import { PrivateRoute, PublicRoute } from "./components/AccesRoutes";
