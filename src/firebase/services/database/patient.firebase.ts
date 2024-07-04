@@ -140,9 +140,7 @@ export async function firebaseSavePatient(newPatient: PatientCreate): Promise<Ap
 			data: {
 				...patient,
 				id: patientRef.id,
-				birthDate: parse(patient.birthDate, "dd/MM/yyyy", new Date()),
-				lastAppointmentDate: null,
-				lastAppointment: null
+				birthDate: parse(patient.birthDate, "dd/MM/yyyy", new Date())
 			}
 		});
 	} catch (error: any) {

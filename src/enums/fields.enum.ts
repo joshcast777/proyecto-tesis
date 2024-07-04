@@ -28,7 +28,6 @@ export enum PatientFields {
 	FirstName = "firstName",
 	LastName = "lastName",
 	IdDoctorCreation = "idDoctorCreation",
-	LastAppointmentDate = "lastAppointmentDate",
 	LastAppointment = "lastAppointment",
 	LocationAddress = "locationAddress",
 	Phone = "phone",
