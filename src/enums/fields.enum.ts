@@ -18,3 +18,28 @@ export enum DoctorFields {
 	Status = "status",
 	UpdateDate = "updateDate"
 }
+
+export enum PatientFields {
+	Id = "id",
+	Appointments = "appointments",
+	BirthDate = "birthDate",
+	CreationDate = "creationDate",
+	Dni = "dni",
+	FirstName = "firstName",
+	LastName = "lastName",
+	IdDoctorCreation = "idDoctorCreation",
+	LastAppointmentDate = "lastAppointmentDate",
+	LastAppointment = "lastAppointment",
+	LocationAddress = "locationAddress",
+	Phone = "phone",
+	Sex = "sex"
+}
+
+export enum AppointmentFields {
+	Id = "id",
+	Date = "date",
+	IdDoctorCreation = "idDoctorCreation",
+	IdPatient = "idPatient",
+	Index = "index",
+	Summary = "summary"
+}

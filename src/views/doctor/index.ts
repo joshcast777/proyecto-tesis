@@ -1,3 +1,5 @@
 import DoctorDashboard from "./DoctorDashboard";
+import PatientForm from "./PatientForm";
+import PoseEstimationForm from "./PoseEstimationForm";
 
-export { DoctorDashboard };
+export { DoctorDashboard, PatientForm, PoseEstimationForm };

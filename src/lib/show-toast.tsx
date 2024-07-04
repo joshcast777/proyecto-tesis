@@ -1,4 +1,4 @@
-import { ToastContent } from "@/components";
+import { ToastContent } from "@/components/ui";
 import { ToastIcons } from "@/constants/ui";
 import { ToastTitles, ToastTypeClasses, ToastTypes } from "@/enums";
 import { CustomToast } from "@/types";

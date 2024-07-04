@@ -1,15 +1,13 @@
-import { Button, Loader } from "@/components/ui";
+import { Button, DataTable, Header, Loader } from "@/components/ui";
 import { doctorStore, globalStore } from "@/store";
 import { Doctor, DoctorTable } from "@/types";
 import { format } from "date-fns";
 import React, { useEffect } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import { DataTable } from "./components/Datatable";
 import { columns } from "./data";
-import { HeaderLayout } from "@/layouts";
 
 export default function AdminDashboard(): React.ReactNode {
-	const { doctors: doctors, getDoctors: getDoctors } = doctorStore();
+	const { doctors, clearDoctors, getDoctors } = doctorStore();
 	const { isLoading, disableLoading, enableLoading } = globalStore();
 
 	const navigate: NavigateFunction = useNavigate();
@@ -18,7 +16,7 @@ export default function AdminDashboard(): React.ReactNode {
 		navigate("/admin/doctor/form");
 	};
 
-	useEffect((): void => {
+	useEffect((): (() => void) => {
 		const execAsync = async (): Promise<void> => {
 			enableLoading();
 
@@ -28,18 +26,22 @@ export default function AdminDashboard(): React.ReactNode {
 		};
 
 		execAsync();
+
+		return (): void => {
+			clearDoctors();
+		};
 	}, []);
 
 	return (
 		<>
 			{isLoading && <Loader />}
 
-			<HeaderLayout />
+			<Header />
 
 			<h2 className="container mt-16 text-center text-5xl">Lista de doctores</h2>
 
 			<div className="container mt-16 flex items-center justify-between">
-				<Button onClick={handleClick}>Nuevo doctor</Button>
+				<Button onClick={handleClick}>Agregar doctor</Button>
 			</div>
 
 			<div className="container mt-5">
@@ -49,8 +51,8 @@ export default function AdminDashboard(): React.ReactNode {
 						(doctor: Doctor, index: number): DoctorTable => ({
 							...doctor,
 							index: index + 1,
-							status: doctor.status ? "Activo" : "Inactivo",
-							updateDate: format(doctor.updateDate, "dd-MM-yyyy"),
+							status: doctor.status,
+							updateDate: format(doctor.updateDate, "dd/MM/yyyy"),
 							actions: <></>
 						})
 					)}

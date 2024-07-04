@@ -1,7 +1,12 @@
 import { Button } from "@/components/ui";
+import { ToastIcons } from "@/constants/ui";
+import { ToastTitles, ToastTypes } from "@/enums";
+import { cn, showToast } from "@/lib";
+import { doctorStore, globalStore } from "@/store";
 import { DoctorTable } from "@/types";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
-import { Pencil, Trash2 } from "lucide-react";
+import { ArchiveRestore, CircleCheck, CircleX, Pencil, Trash2 } from "lucide-react";
+import { useEffect } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
 export const columns: ColumnDef<DoctorTable>[] = [
@@ -67,9 +72,9 @@ export const columns: ColumnDef<DoctorTable>[] = [
 		accessorKey: "status",
 		header: (): React.ReactNode => <div className="text-center">Estado</div>,
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
-			const status: string = row.getValue("status");
+			const status: boolean = row.getValue("status");
 
-			return <div className="text-center">{status}</div>;
+			return status ? <CircleCheck className="mx-auto text-green-500" /> : <CircleX className="mx-auto text-red-500" />;
 		}
 	},
 	{
@@ -85,15 +90,48 @@ export const columns: ColumnDef<DoctorTable>[] = [
 		accessorKey: "actions",
 		header: () => <div className="text-center">Acciones</div>,
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
+			const { deleteDoctor, getDoctors } = doctorStore();
+			const { errorMessage, clearErrorMessage, disableLoading, enableLoading, setErrorMessage } = globalStore();
+
 			const navigate: NavigateFunction = useNavigate();
 
 			const id: number = row.getValue("id");
+			const status: boolean = row.getValue("status");
+
+			const onDeleteDoctor = async (): Promise<void> => {
+				enableLoading();
+
+				const response: string = await deleteDoctor(id.toString());
+
+				if (response !== "") {
+					setErrorMessage(response);
+					disableLoading();
+
+					return;
+				}
+
+				getDoctors();
+
+				disableLoading();
+			};
+
+			useEffect((): void => {
+				if (errorMessage !== "") {
+					showToast({
+						type: ToastTypes.Error,
+						title: ToastTitles.Error,
+						message: errorMessage,
+						icon: ToastIcons.Error,
+						onDismissAndOnAutoCloseFunctions: clearErrorMessage
+					});
+				}
+			}, [errorMessage]);
 
 			return (
 				<div className="flex items-center justify-center gap-2">
 					<Button
 						size="icon"
-						className="bg-yellow-500"
+						className="bg-yellow-500 hover:bg-yellow-400"
 						onClick={(): void => {
 							navigate(`/admin/doctor/form/${id}`);
 						}}
@@ -101,8 +139,15 @@ export const columns: ColumnDef<DoctorTable>[] = [
 						<Pencil className="h-4 w-4" />
 					</Button>
 
-					<Button size="icon" className="bg-red-500">
-						<Trash2 className="h-4 w-4" />
+					<Button
+						size="icon"
+						className={cn({
+							"bg-red-500 hover:bg-red-400": status,
+							"bg-green-500 hover:bg-green-400": !status
+						})}
+						onClick={onDeleteDoctor}
+					>
+						{status ? <Trash2 className="h-4 w-4" /> : <ArchiveRestore className="h-4 w-4" />}
 					</Button>
 				</div>
 			);

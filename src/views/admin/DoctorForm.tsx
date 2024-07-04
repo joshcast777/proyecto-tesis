@@ -1,37 +1,66 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { Button, Calendar, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input, Loader, Popover, PopoverContent, PopoverTrigger, RadioGroup, RadioGroupItem } from "@/components/ui";
-import { DefaultValues } from "@/constants";
+import { Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input, InputMask, Loader, RadioGroup, RadioGroupLayout } from "@/components/ui";
+import { DefaultValues, ErrorMessages } from "@/constants";
 import { cn, showToast } from "@/lib";
 import { doctorSchema } from "@/schemas";
-import { doctorStore, globalStore } from "@/store";
-import { Doctor, DoctorCreate } from "@/types";
-import { format } from "date-fns";
-import { CalendarIcon, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { DoctorFields, Roles, ToastTitles, ToastTypes } from "@/enums";
+import { authStore, doctorStore, globalStore } from "@/store";
+import { Doctor, DoctorCreate, SexData } from "@/types";
 import { ToastIcons } from "@/constants/ui";
+import { DoctorFields, Roles, ToastTitles, ToastTypes } from "@/enums";
+import { format } from "date-fns";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
+import { sex } from "@/data";
 
 export default function DoctorForm(): React.ReactNode {
 	const [disable, setDisable] = useState<boolean>(false);
 
-	const { editDoctor, getDoctor, saveDoctor } = doctorStore();
+	const { signInDoctor, signOutDoctor, signUpDoctor } = authStore();
+	const { getDoctor, saveDoctor } = doctorStore();
 	const { errorMessage, isLoading, clearErrorMessage, enableLoading, disableLoading, setErrorMessage } = globalStore();
 
 	const navigate: NavigateFunction = useNavigate();
 
 	const { id } = useParams();
 
-	const form = useForm<Doctor>({
+	const form = useForm<DoctorCreate>({
 		resolver: zodResolver(doctorSchema),
-		defaultValues: DefaultValues.Doctor
+		defaultValues: DefaultValues.DoctorCreate
 	});
 
-	const onSubmit: SubmitHandler<Doctor> = async (formData: Doctor): Promise<void> => {
+	const onSubmit: SubmitHandler<DoctorCreate> = async (formData: DoctorCreate): Promise<void> => {
 		setDisable(true);
 		enableLoading();
+
+		let response: string = "";
+
+		if (!Boolean(id)) {
+			response = await signUpDoctor({
+				email: formData.email,
+				password: formData.email.split("@")[0]
+			});
+
+			if (response === ErrorMessages.CouldNotCompleteTask) {
+				setErrorMessage(response);
+
+				setDisable(false);
+				disableLoading();
+
+				return;
+			}
+
+			await signOutDoctor();
+
+			const { VITE_ADMIN_EMAIL } = import.meta.env;
+
+			await signInDoctor({
+				email: VITE_ADMIN_EMAIL,
+				password: VITE_ADMIN_EMAIL.split("@")[0]
+			});
+		}
 
 		const newDoctor: DoctorCreate = structuredClone(formData);
 
@@ -42,13 +71,7 @@ export default function DoctorForm(): React.ReactNode {
 		newDoctor.updateDate = currentDate;
 		newDoctor.status = true;
 
-		let response: string = "";
-
-		if (id === undefined) {
-			response = await saveDoctor(newDoctor);
-		} else {
-			response = await editDoctor(id, newDoctor);
-		}
+		response = await saveDoctor(Boolean(id) ? id! : response, newDoctor);
 
 		if (response !== "") {
 			setErrorMessage(response);
@@ -64,10 +87,12 @@ export default function DoctorForm(): React.ReactNode {
 		showToast({
 			type: ToastTypes.Success,
 			title: ToastTitles.Success,
-			message: "Será redireccionado...",
+			message: "Doctor registrado, será redireccionado",
 			icon: ToastIcons.Success,
 			onDismissAndOnAutoCloseFunctions: (): void => {
-				navigate("/admin/dashboard");
+				navigate("/doctor/dashboard", {
+					replace: true
+				});
 			}
 		});
 	};
@@ -85,8 +110,10 @@ export default function DoctorForm(): React.ReactNode {
 			return;
 		}
 
-		form.reset(doctor);
-		console.log(form.getValues());
+		form.reset({
+			...doctor,
+			birthDate: format(doctor.birthDate, "dd/MM/yyyy")
+		});
 
 		disableLoading();
 	};
@@ -113,7 +140,7 @@ export default function DoctorForm(): React.ReactNode {
 		<>
 			{isLoading && <Loader />}
 
-			<div className="flex h-screen flex-col items-center justify-start overflow-y-scroll bg-[url('/src/assets/background-doctor.webp')] bg-cover bg-center bg-no-repeat p-8 sm:justify-center landscape:sm:justify-start landscape:md:justify-center">
+			<div className="flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url('/src/assets/images/background-doctor.webp')] bg-cover bg-center bg-no-repeat p-8">
 				<div className="container rounded bg-blue-100/75 p-5 text-gray-900 lg:max-w-[1024px]">
 					<h2 className="text-center text-3xl font-bold uppercase xl:text-5xl">{id === undefined ? "Ingreso de doctor" : "Editar doctor"}</h2>
 
@@ -200,19 +227,20 @@ export default function DoctorForm(): React.ReactNode {
 										<FormItem>
 											<FormLabel className="text-lg">Fecha de nacimiento</FormLabel>
 
-											<Popover>
-												<PopoverTrigger asChild>
-													<FormControl className="placeholder:tex-base inline-flex w-full text-base md:h-12">
-														<Button variant={"outline"} className={cn("pl-3 text-left font-normal", !Boolean(field.value) && "text-gray-100")}>
-															{Boolean(field.value) ? format(field.value, "dd/MM/yyyy") : <span>Seleccione una fecha</span>} <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-														</Button>
-													</FormControl>
-												</PopoverTrigger>
-
-												<PopoverContent className="w-auto bg-gray-100 p-0" align="start">
-													<Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus />
-												</PopoverContent>
-											</Popover>
+											<FormControl>
+												<InputMask
+													mask="99/99/9999"
+													className={cn("flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-base placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:h-12", {
+														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.lastName)
+													})}
+													onChange={field.onChange}
+													onBlur={field.onBlur}
+													value={field.value}
+													ref={field.ref}
+													name={field.name}
+													disabled={id !== undefined}
+												/>
+											</FormControl>
 
 											<div className="h-5">
 												<FormMessage />
@@ -229,22 +257,12 @@ export default function DoctorForm(): React.ReactNode {
 											<FormLabel className="text-lg">Sexo</FormLabel>
 
 											<FormControl>
-												<RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex h-10 w-56 justify-between md:h-12">
-													<FormItem className="flex items-center space-x-3 space-y-0 disabled:text-gray-900 disabled:opacity-75">
-														<FormControl>
-															<RadioGroupItem value="male" disabled={id !== undefined} />
-														</FormControl>
-
-														<FormLabel className="text-base font-normal">Masculino</FormLabel>
-													</FormItem>
-
-													<FormItem className="flex items-center space-x-3 space-y-0 disabled:text-gray-900 disabled:opacity-75">
-														<FormControl>
-															<RadioGroupItem value="female" disabled={id !== undefined} />
-														</FormControl>
-
-														<FormLabel className="text-base font-normal">Femenino</FormLabel>
-													</FormItem>
+												<RadioGroup onValueChange={field.onChange} defaultValue={field.value} value={field.value} className="flex h-10 w-56 justify-between md:h-12">
+													{sex.map(
+														(s: SexData): React.ReactNode => (
+															<RadioGroupLayout sexData={s} disable={id !== undefined} />
+														)
+													)}
 												</RadioGroup>
 											</FormControl>
 
@@ -337,7 +355,9 @@ export default function DoctorForm(): React.ReactNode {
 									onClick={(): void => {
 										form.reset();
 
-										navigate("/admin/dashboard");
+										navigate("/admin/dashboard", {
+											replace: true
+										});
 									}}
 									className="w-28 lg:text-lg"
 								>

@@ -1,45 +1,43 @@
 import { Sex } from "@/enums";
 
-export type Doctor = {
+export type Patient = {
 	id: string;
 	birthDate: Date;
 	creationDate: Date;
 	dni: string;
-	email: string;
 	firstName: string;
 	lastName: string;
+	doctorNameCreation: string;
 	locationAddress: string;
 	phone: string;
-	role: string;
 	sex: Sex;
-	status: boolean;
-	updateDate: Date;
 };
 
-export type DoctorCreate = {
+export type PatientCreate = {
 	birthDate: string;
 	creationDate: Date;
 	dni: string;
-	email: string;
 	firstName: string;
 	lastName: string;
+	doctorNameCreation: string;
 	locationAddress: string;
 	phone: string;
-	role: string;
 	sex: Sex;
-	status: boolean;
-	updateDate: Date;
 };
 
-export type DoctorTable = {
+export type Appointment = {
+	id: string;
+	date: Date;
+	doctorName: string;
+	summary: string;
+};
+
+export type PatientTable = {
 	id: string;
 	index: number;
 	dni: string;
-	email: string;
-	firstName: string;
-	lastName: string;
-	phone: string;
-	status: boolean;
-	updateDate: string;
+	fullName: string;
+	age: number;
+	sex: Sex;
 	actions: React.ReactNode;
 };

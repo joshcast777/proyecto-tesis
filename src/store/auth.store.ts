@@ -1,5 +1,6 @@
 import { DefaultValues, ErrorMessages, LocalStorageKeys } from "@/constants";
-import { firebaseGetDoctor, firebaseSignInUser, firebaseSignOutUser, firebaseSignUpUser } from "@/firebase/services";
+import { firebaseSignInDoctor, firebaseSignOutDoctor, firebaseSignUpDoctor } from "@/firebase/services/auth";
+import { firebaseGetDoctor } from "@/firebase/services/database";
 import { ApiResponse, AuthUser, Doctor } from "@/types";
 import { AuthStore } from "@/types/store";
 import { create } from "zustand";
@@ -8,24 +9,24 @@ import { devtools } from "zustand/middleware";
 export const authStore = create<AuthStore>()(
 	devtools((set) => ({
 		isAuthenticated: Boolean(localStorage.getItem(LocalStorageKeys.Id)) && Boolean(localStorage.getItem(LocalStorageKeys.Role)) && localStorage.getItem(LocalStorageKeys.Id) !== "" && localStorage.getItem(LocalStorageKeys.Role) !== "",
-		currentUser: DefaultValues.Doctor,
+		currentDoctor: DefaultValues.Doctor,
 		clearIsAuthenticated: (): void => {
 			set(
 				{
 					isAuthenticated: false,
-					currentUser: DefaultValues.Doctor
+					currentDoctor: DefaultValues.Doctor
 				},
 				false,
 				"CLEAR_ERROR_MESSAGE"
 			);
 		},
-		getCurrentUser: async (id: string): Promise<void> => {
+		getCurrentDoctor: async (id: string): Promise<void> => {
 			const apiResponse: ApiResponse<Doctor> = await firebaseGetDoctor(id);
 
 			if (!apiResponse.success) {
 				set(
 					{
-						currentUser: DefaultValues.Doctor,
+						currentDoctor: DefaultValues.Doctor,
 						isAuthenticated: false
 					},
 					false,
@@ -40,7 +41,7 @@ export const authStore = create<AuthStore>()(
 
 			set(
 				{
-					currentUser: apiResponse.data!,
+					currentDoctor: apiResponse.data!,
 					isAuthenticated: true
 				},
 				false,
@@ -51,19 +52,19 @@ export const authStore = create<AuthStore>()(
 			set(
 				{
 					isAuthenticated: true,
-					currentUser: user
+					currentDoctor: user
 				},
 				false,
 				"SET_AUTHENTICATED_USER"
 			);
 		},
-		signInUser: async ({ email, password }: AuthUser): Promise<string> => {
-			const apiResponse: ApiResponse<undefined> = await firebaseSignInUser({
+		signInDoctor: async ({ email, password }: AuthUser): Promise<string> => {
+			const apiResponse: ApiResponse<string> = await firebaseSignInDoctor({
 				email,
 				password
 			});
 
-			if (apiResponse.message !== "") {
+			if (!apiResponse.success) {
 				if (apiResponse.message === ErrorMessages.InvalidCredentials) {
 					return ErrorMessages.InvalidCredentials;
 				} else {
@@ -71,10 +72,13 @@ export const authStore = create<AuthStore>()(
 				}
 			}
 
-			return "";
+			localStorage.setItem(LocalStorageKeys.Id, apiResponse.data!);
+
+			return apiResponse.data!;
 		},
-		signOutUser: async (): Promise<string> => {
-			const apiResponse: ApiResponse<string> = await firebaseSignOutUser();
+		signOutDoctor: async (): Promise<string> => {
+			const apiResponse: ApiResponse<null> = await firebaseSignOutDoctor();
+			console.log(apiResponse);
 
 			if (!apiResponse.success) {
 				return ErrorMessages.CouldNotCompleteTask;
@@ -85,17 +89,18 @@ export const authStore = create<AuthStore>()(
 
 			return "";
 		},
-		signUpUser: async ({ email, password }: AuthUser): Promise<string> => {
-			const apiResponse: ApiResponse<undefined> = await firebaseSignUpUser({
+		signUpDoctor: async ({ email, password }: AuthUser): Promise<string> => {
+			const apiResponse: ApiResponse<string> = await firebaseSignUpDoctor({
 				email,
 				password
 			});
+			console.log(apiResponse);
 
-			if (apiResponse.message !== "") {
+			if (!apiResponse.success) {
 				return ErrorMessages.CouldNotCompleteTask;
 			}
 
-			return "";
+			return apiResponse.data!;
 		}
 	}))
 );

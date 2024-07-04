@@ -1,4 +1,6 @@
 export enum Collections {
-	Roles = "roles",
-	Doctors = "doctors"
+	Appointments = "appointments",
+	Doctors = "doctors",
+	Patients = "patients",
+	Roles = "roles"
 }

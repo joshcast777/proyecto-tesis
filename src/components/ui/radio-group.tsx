@@ -3,6 +3,13 @@ import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import { Circle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { FormControl, FormItem, FormLabel } from "./form";
+import { SexData } from "@/types";
+
+type RadioGroupLayoutProps = {
+	sexData: SexData;
+	disable: boolean;
+};
 
 const RadioGroup = React.forwardRef<React.ElementRef<typeof RadioGroupPrimitive.Root>, React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>>(({ className, ...props }, ref) => {
 	return <RadioGroupPrimitive.Root className={cn("grid gap-2", className)} {...props} ref={ref} />;
@@ -20,4 +27,22 @@ const RadioGroupItem = React.forwardRef<React.ElementRef<typeof RadioGroupPrimit
 });
 RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
 
-export { RadioGroup, RadioGroupItem };
+const RadioGroupLayout = ({ sexData, disable }: RadioGroupLayoutProps): React.ReactNode => {
+	return (
+		<FormItem className="flex items-center space-x-3 space-y-0 disabled:text-gray-900 disabled:opacity-75">
+			<FormControl>
+				<RadioGroupItem value={sexData.value} disabled={disable} />
+			</FormControl>
+
+			<FormLabel
+				className={cn("text-base font-normal", {
+					"cursor-not-allowed": disable
+				})}
+			>
+				{sexData.label}
+			</FormLabel>
+		</FormItem>
+	);
+};
+
+export { RadioGroup, RadioGroupItem, RadioGroupLayout };

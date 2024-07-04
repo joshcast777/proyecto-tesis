@@ -73,7 +73,7 @@ export default function PoseEstimationRoute(): React.ReactNode {
 				}
 			/>
 
-			<Route path="" element={<Navigate to="/admin/dashboard" />} />
+			<Route path="" element={<Navigate to={`/${localStorage.getItem(LocalStorageKeys.Role)}/dashboard`} />} />
 		</Routes>
 	);
 }

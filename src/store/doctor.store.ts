@@ -1,19 +1,42 @@
-import { DefaultValues, ErrorMessages } from "@/constants";
-import { firebaseEditDoctor, firebaseGetDoctor, firebaseGetDoctorByEmail, firebaseGetDoctors, firebaseSaveDoctor } from "@/firebase/services";
+import { ErrorMessages } from "@/constants";
+import { firebaseCheckDoctor, firebaseDeleteDoctor, firebaseGetDoctor, firebaseGetDoctors, firebaseSaveDoctor } from "@/firebase/services/database";
 import { ApiResponse, Doctor, DoctorCreate } from "@/types";
 import { DoctorStore } from "@/types/store";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
 export const doctorStore = create<DoctorStore>()(
-	devtools((set) => ({
+	devtools((set, get) => ({
 		doctors: [],
-		errorMessage: "",
-		editDoctor: async (id: string, doctor: DoctorCreate): Promise<string> => {
-			const apiResponse: ApiResponse<undefined> = await firebaseEditDoctor(id, doctor);
+		checkDoctor: async (email: string): Promise<string> => {
+			const apiResponse: ApiResponse<null> = await firebaseCheckDoctor(email);
 
-			if (apiResponse.message !== "") {
+			if (!apiResponse.success) {
 				return apiResponse.message;
+			}
+
+			return "";
+		},
+		clearDoctors: (): void => {
+			set(
+				{
+					doctors: []
+				},
+				false,
+				"CLEAR_DOCTORS"
+			);
+		},
+		deleteDoctor: async (id: string): Promise<string> => {
+			const { doctors } = get();
+
+			const doctor = doctors.find((doctor: Doctor): boolean => doctor.id === id);
+
+			doctor!.status = false;
+
+			const apiResponse: ApiResponse<null> = await firebaseDeleteDoctor(doctor!);
+
+			if (!apiResponse.success) {
+				return ErrorMessages.CouldNotCompleteTask;
 			}
 
 			return "";
@@ -21,26 +44,8 @@ export const doctorStore = create<DoctorStore>()(
 		getDoctor: async (id: string): Promise<Doctor | string> => {
 			const apiResponse: ApiResponse<Doctor> = await firebaseGetDoctor(id);
 
-			if (apiResponse.message !== "") {
-				return apiResponse.message;
-			}
-
-			return apiResponse.data!;
-		},
-		getDoctorByEmail: async (email: string): Promise<Doctor | string> => {
-			const apiResponse: ApiResponse<Doctor> = await firebaseGetDoctorByEmail(email);
-
 			if (!apiResponse.success) {
-				return ErrorMessages.DataNotFound;
-			}
-
-			return apiResponse.data!;
-		},
-		getDoctorById: async (id: string): Promise<Doctor> => {
-			const apiResponse: ApiResponse<Doctor> = await firebaseGetDoctor(id);
-
-			if (apiResponse.message !== "") {
-				return DefaultValues.Doctor;
+				return apiResponse.message;
 			}
 
 			return apiResponse.data!;
@@ -49,42 +54,25 @@ export const doctorStore = create<DoctorStore>()(
 			const apiResponse: ApiResponse<Doctor[]> = await firebaseGetDoctors();
 
 			if (!apiResponse.success) {
-				set(
-					{
-						errorMessage: "Error/Error al obtener los datos"
-					},
-					false,
-					"SET_ERROR_MESSAGE"
-				);
-
 				return;
 			}
 
 			set(
 				{
-					doctors: apiResponse.data
+					doctors: apiResponse.data!
 				},
 				false,
-				"SET_USER"
+				"SET_DOCTORS"
 			);
 		},
-		saveDoctor: async (doctor: DoctorCreate): Promise<string> => {
-			const apiResponse: ApiResponse<undefined> = await firebaseSaveDoctor(doctor);
+		saveDoctor: async (id: string, doctor: DoctorCreate): Promise<string> => {
+			const apiResponse: ApiResponse<null> = await firebaseSaveDoctor(id, doctor);
 
 			if (apiResponse.message !== "") {
-				return apiResponse.message;
+				return ErrorMessages.CouldNotCompleteTask;
 			}
 
 			return "";
-		},
-		setErrorMessage: (message: string): void => {
-			set(
-				{
-					errorMessage: message
-				},
-				false,
-				"SET_ERROR_MESSAGE"
-			);
 		}
 	}))
 );

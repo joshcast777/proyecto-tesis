@@ -1,3 +1,3 @@
-import { columns } from "./columns.data";
+import { columns } from "./doctors.column";
 
 export { columns };

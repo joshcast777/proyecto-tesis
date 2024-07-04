@@ -5,13 +5,10 @@ import { ToastTitles, ToastTypes } from "@/enums";
 import { showToast } from "@/lib";
 import { authStore, globalStore } from "@/store";
 import { useEffect } from "react";
-// import { NavigateFunction, useNavigate } from "react-router-dom";
 
-export default function HeaderLayout(): React.ReactNode {
-	const { clearIsAuthenticated, signOutUser } = authStore();
+export function Header(): React.ReactNode {
+	const { clearIsAuthenticated, signOutDoctor: signOutUser } = authStore();
 	const { errorMessage, clearErrorMessage, setErrorMessage } = globalStore();
-
-	// const navigate: NavigateFunction = useNavigate();
 
 	const signOutSession = async (): Promise<void> => {
 		const response: string = await signOutUser();
@@ -26,8 +23,6 @@ export default function HeaderLayout(): React.ReactNode {
 
 		localStorage.removeItem(LocalStorageKeys.Id);
 		localStorage.removeItem(LocalStorageKeys.Role);
-
-		// navigate("/auth");
 	};
 
 	useEffect((): void => {
@@ -45,7 +40,7 @@ export default function HeaderLayout(): React.ReactNode {
 	return (
 		<header className="py-3 shadow-md">
 			<div className="container flex h-20 items-center justify-between">
-				<img src="/src/assets/ug-logo.png" alt="UG Logo" className="h-full" />
+				<img src="/src/assets/images/ug-logo.png" alt="UG Logo" className="h-full" />
 
 				<Button onClick={signOutSession}>Cerrar sesión</Button>
 			</div>

@@ -6,9 +6,11 @@ export default function AdminRoutes(): React.ReactNode {
 		<Routes>
 			<Route path="dashboard" element={<AdminDashboard />} />
 
-			<Route path="doctor/form" element={<DoctorForm />} />
+			<Route path="doctor/form">
+				<Route path="" element={<DoctorForm />} />
 
-			<Route path="doctor/form/:id" element={<DoctorForm />} />
+				<Route path=":id" element={<DoctorForm />} />
+			</Route>
 		</Routes>
 	);
 }

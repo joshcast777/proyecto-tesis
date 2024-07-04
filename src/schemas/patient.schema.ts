@@ -2,7 +2,7 @@ import { ErrorFields } from "@/constants";
 import { Sex } from "@/enums";
 import { z } from "zod";
 
-export const doctorSchema = z
+export const patientSchema = z
 	.object({
 		dni: z
 			.string({
@@ -35,11 +35,6 @@ export const doctorSchema = z
 			.string({
 				required_error: ErrorFields.Required
 			})
-			.regex(/^\d{10}$/, "El celular debe ser de 10 dígitos"),
-		email: z
-			.string({
-				required_error: ErrorFields.Required
-			})
-			.regex(/^[a-zA-Z]+\.[a-zA-Z]+@ug\.edu\.ec$/, "Formato de correo incorrecto")
+			.regex(/^\d{10}$/, "El celular debe ser de 10 dígitos")
 	})
 	.required();

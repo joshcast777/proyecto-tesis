@@ -1,7 +1,6 @@
 import { Cell, ColumnDef, Header, HeaderGroup, Row, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { DataTablePagination } from "@/components";
 import React from "react";
 
 type DataTableProps<TData, TValue> = {
@@ -58,8 +57,6 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 					</TableBody>
 				</Table>
 			</div>
-
-			<DataTablePagination table={table} />
 		</>
 	);
 }
