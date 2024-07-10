@@ -1,4 +1,4 @@
-import { Appointment, Patient, PatientCreate } from "../patient.type";
+import { Appointment, Patient, PatientData } from "../patient.type";
 
 export type PatientStore = {
 	currentAppointment: Appointment;
@@ -8,8 +8,8 @@ export type PatientStore = {
 	clearCurrentPatient: () => void;
 	clearPatients: () => void;
 	editPatient: (newPatient: Patient) => Promise<string>;
-	getCurrentAppointment: () => Promise<string>;
+	getAppointment: () => Promise<void>;
 	getPatient: (id: string) => Promise<string>;
 	getPatients: () => Promise<void>;
-	savePatient: (newPatient: PatientCreate) => Promise<string>;
+	savePatient: (newPatient: PatientData) => Promise<string>;
 };

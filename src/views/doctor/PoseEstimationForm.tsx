@@ -1,4 +1,5 @@
-import { Button, Loader, Textarea } from "@/components/ui";
+import { ImageUpload } from "@/components/doctor";
+import { Button, FormTitle, Loader, Separator, Textarea } from "@/components/ui";
 import { globalStore } from "@/store";
 import { useState } from "react";
 
@@ -13,12 +14,16 @@ export default function PoseEstimationForm(): React.ReactNode {
 
 			<div className="flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url('/src/assets/images/background-patient.webp')] bg-cover bg-center bg-no-repeat p-8">
 				<div className="container rounded bg-blue-300/75 p-5 text-gray-900 lg:max-w-[1024px]">
-					<h2 className="text-center text-3xl font-bold uppercase xl:text-5xl">Estimación de pose</h2>
+					<FormTitle>Estimación de pose</FormTitle>
 
-					<div className="mt-10 flex space-x-10">
-						<div className="h-[600px] w-full rounded border border-black"></div>
+					<div className="mt-10 flex flex-wrap space-y-10">
+						<ImageUpload />
 
-						<div className="h-[600px] w-full rounded border border-black"></div>
+						<Separator />
+
+						<div className="flex w-full">
+							<div className="h-[500px] w-full rounded border border-black"></div>
+						</div>
 					</div>
 
 					<div className="mt-10">

@@ -49,10 +49,11 @@ export default function DoctorDashboard(): React.ReactNode {
 					columns={columns}
 					data={patients.map(
 						(patient: Patient, index: number): PatientTable => ({
-							...patient,
+							...patient.data,
+							id: patient.id,
 							index: index + 1,
-							fullName: `${patient.firstName} ${patient.lastName}`,
-							age: differenceInYears(new Date(), patient.birthDate),
+							fullName: `${patient.data.firstName} ${patient.data.lastName}`,
+							age: differenceInYears(new Date(), patient.data.birthDate),
 							actions: <></>
 						})
 					)}

@@ -1,12 +1,13 @@
-import { ErrorMessages } from "@/constants";
+import { DefaultValues, ErrorMessages } from "@/constants";
 import { firebaseCheckDoctor, firebaseDeleteDoctor, firebaseGetDoctor, firebaseGetDoctors, firebaseSaveDoctor } from "@/firebase/services/database";
-import { ApiResponse, Doctor, DoctorCreate } from "@/types";
+import { ApiResponse, Doctor, DoctorData } from "@/types";
 import { DoctorStore } from "@/types/store";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
 export const doctorStore = create<DoctorStore>()(
 	devtools((set, get) => ({
+		doctor: DefaultValues.Doctor,
 		doctors: [],
 		checkDoctor: async (email: string): Promise<string> => {
 			const apiResponse: ApiResponse<null> = await firebaseCheckDoctor(email);
@@ -29,9 +30,9 @@ export const doctorStore = create<DoctorStore>()(
 		deleteDoctor: async (id: string): Promise<string> => {
 			const { doctors } = get();
 
-			const doctor = doctors.find((doctor: Doctor): boolean => doctor.id === id);
+			const doctor: Doctor | undefined = doctors.find((doctor: Doctor): boolean => doctor.id === id);
 
-			doctor!.status = false;
+			doctor!.data.status = false;
 
 			const apiResponse: ApiResponse<null> = await firebaseDeleteDoctor(doctor!);
 
@@ -41,14 +42,22 @@ export const doctorStore = create<DoctorStore>()(
 
 			return "";
 		},
-		getDoctor: async (id: string): Promise<Doctor | string> => {
+		getDoctor: async (id: string): Promise<string> => {
 			const apiResponse: ApiResponse<Doctor> = await firebaseGetDoctor(id);
 
 			if (!apiResponse.success) {
 				return apiResponse.message;
 			}
 
-			return apiResponse.data!;
+			set(
+				{
+					doctor: apiResponse.data!
+				},
+				false,
+				"SET_DOCTOR"
+			);
+
+			return "";
 		},
 		getDoctors: async (): Promise<void> => {
 			const apiResponse: ApiResponse<Doctor[]> = await firebaseGetDoctors();
@@ -65,7 +74,7 @@ export const doctorStore = create<DoctorStore>()(
 				"SET_DOCTORS"
 			);
 		},
-		saveDoctor: async (id: string, doctor: DoctorCreate): Promise<string> => {
+		saveDoctor: async (id: string, doctor: DoctorData): Promise<string> => {
 			const apiResponse: ApiResponse<null> = await firebaseSaveDoctor(id, doctor);
 
 			if (apiResponse.message !== "") {

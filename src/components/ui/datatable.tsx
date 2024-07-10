@@ -1,13 +1,35 @@
+// TanStack
 import { Cell, ColumnDef, Header, HeaderGroup, Row, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import React from "react";
+// Components
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table";
 
+/**
+ * Description placeholder
+ *
+ * @typedef {DataTableProps}
+ * @template TData
+ * @template TValue
+ */
 type DataTableProps<TData, TValue> = {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 };
 
+/**
+ * `DataTable` is a component that renders a data table with pagination.
+ *
+ * @export
+ *
+ * @template TData - Type of the data.
+ * @template TValue - Type of the value.
+ *
+ * @param {DataTableProps<TData, TValue>} props - The properties for the component.
+ * @param {ColumnDef<TData, TValue>[]} props.columns - Array of column definitions for the table.
+ * @param {TData[]} props.data - Array of data objects to be displayed in the table.
+ *
+ * @returns {React.ReactNode}
+ */
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>): React.ReactNode {
 	const table = useReactTable({
 		data,

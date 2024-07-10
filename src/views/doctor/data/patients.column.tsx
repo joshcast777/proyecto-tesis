@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui";
+import { Button, TooltipLayout } from "@/components/ui";
 import { Sex } from "@/enums";
 import { cn } from "@/lib";
 import { PatientTable } from "@/types";
@@ -54,11 +54,16 @@ export const columns: ColumnDef<PatientTable>[] = [
 			const sex: Sex = row.getValue("sex");
 
 			return (
-				<CircleUserRound
-					className={cn("mx-auto h-4 w-4", {
-						"text-blue-500": sex === Sex.Male,
-						"text-pink-500": sex === Sex.Female
-					})}
+				<TooltipLayout
+					triggerContent={(): React.ReactNode => (
+						<CircleUserRound
+							className={cn("mx-auto h-4 w-4", {
+								"text-blue-500": sex === Sex.Male,
+								"text-pink-500": sex === Sex.Female
+							})}
+						/>
+					)}
+					content={(): React.ReactNode => <p>{sex === Sex.Male ? "Hombre" : "Mujer"}</p>}
 				/>
 			);
 		}
@@ -73,15 +78,20 @@ export const columns: ColumnDef<PatientTable>[] = [
 
 			return (
 				<div className="flex items-center justify-center gap-2">
-					<Button
-						size="icon"
-						className="bg-blue-500 hover:bg-blue-400"
-						onClick={(): void => {
-							navigate(`/doctor/appointment/form/${id}`);
-						}}
-					>
-						<Eye className="h-4 w-4" />
-					</Button>
+					<TooltipLayout
+						triggerContent={(): React.ReactNode => (
+							<Button
+								size="icon"
+								className="bg-blue-500 hover:bg-blue-400"
+								onClick={(): void => {
+									navigate(`/doctor/appointment/form/${id}`);
+								}}
+							>
+								<Eye className="h-4 w-4" />
+							</Button>
+						)}
+						content={(): React.ReactNode => <p>Ver paciente</p>}
+					/>
 				</div>
 			);
 		}

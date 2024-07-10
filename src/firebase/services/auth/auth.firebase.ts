@@ -1,13 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { errorApiResponse, successApiResponse } from "@/lib";
-import { ApiResponse, AuthUser } from "@/types";
-import { Auth, User, UserCredential, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
+// Firebase
 import { app } from "../../firebase";
+import { Auth, User, UserCredential, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
+// Utils
+import { errorApiResponse, successApiResponse } from "@/lib";
+
+// Types
+import { ApiResponse, AuthForm } from "@/types";
+
+/**
+ * Firebase Authentication instance
+ *
+ * @type {Auth}
+ */
 const firebaseAuth: Auth = getAuth(app);
 
-export async function firebaseSignInDoctor({ email, password }: AuthUser): Promise<ApiResponse<string>> {
+/**
+ * Signs in a doctor using Firebase Authentication.
+ *
+ * @export
+ * @async
+ * @param {AuthForm} params - The authentication form containing the email and password.
+ * @param {string} params.email - The email of the doctor.
+ * @param {string} params.password - The password of the doctor.
+ * @returns {Promise<ApiResponse<string>>} A promise that resolves with an API response containing a string.
+ */
+export async function firebaseSignInDoctor({ email, password }: AuthForm): Promise<ApiResponse<string>> {
 	try {
 		const userCredential: UserCredential = await signInWithEmailAndPassword(firebaseAuth, email, password);
 
@@ -23,6 +43,13 @@ export async function firebaseSignInDoctor({ email, password }: AuthUser): Promi
 	}
 }
 
+/**
+ * Signs out the currently authenticated doctor using Firebase Authentication.
+ *
+ * @export
+ * @async
+ * @returns {Promise<ApiResponse<null>>} A promise that resolves with an API response containing null.
+ */
 export async function firebaseSignOutDoctor(): Promise<ApiResponse<null>> {
 	try {
 		await signOut(firebaseAuth);
@@ -37,7 +64,17 @@ export async function firebaseSignOutDoctor(): Promise<ApiResponse<null>> {
 	}
 }
 
-export async function firebaseSignUpDoctor({ email, password }: AuthUser): Promise<ApiResponse<string>> {
+/**
+ * Signs up a new doctor using Firebase Authentication.
+ *
+ * @export
+ * @async
+ * @param {AuthForm} params - The parameters for signing up.
+ * @param {string} params.email - The email of the doctor.
+ * @param {string} params.password - The password of the doctor.
+ * @returns {Promise<ApiResponse<string>>} A promise that resolves with an API response containing a string.
+ */
+export async function firebaseSignUpDoctor({ email, password }: AuthForm): Promise<ApiResponse<string>> {
 	try {
 		const userCredential: UserCredential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
 
@@ -53,6 +90,13 @@ export async function firebaseSignUpDoctor({ email, password }: AuthUser): Promi
 	}
 }
 
+/**
+ * Gets the currently authenticated doctor using Firebase Authentication.
+ *
+ * @export
+ * @async
+ * @returns {Promise<void>} A promise that resolves with no value.
+ */
 export async function firebaseGetAuthenticatedDoctor(): Promise<void> {
 	onAuthStateChanged(
 		firebaseAuth,

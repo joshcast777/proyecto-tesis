@@ -8,7 +8,7 @@ const mailValidation = (value: string): boolean => {
 	return regex1.test(value) || value === email2;
 };
 
-export const formSchema = z
+export const authSchema = z
 	.object({
 		email: z
 			.string({

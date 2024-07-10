@@ -1,50 +1,52 @@
+// Enums & Types
 import { Sex } from "@/enums";
-import { Appointment, AuthForm, Doctor, DoctorCreate, Patient, PatientCreate } from "@/types";
+import { Appointment, AuthForm, Doctor, DoctorForm, Patient, PatientForm } from "@/types";
 
 type DefaultValue = {
 	Appointment: Appointment;
 	Doctor: Doctor;
-	DoctorCreate: DoctorCreate;
+	DoctorForm: DoctorForm;
 	Login: AuthForm;
 	Patient: Patient;
-	PatientCreate: PatientCreate;
+	PatientForm: PatientForm;
 };
 
 export const DefaultValues: DefaultValue = {
 	Appointment: {
 		id: "",
-		date: new Date(),
-		doctorName: "",
-		summary: ""
+		data: {
+			date: new Date(),
+			idDoctor: "",
+			nameDoctor: "",
+			summary: ""
+		}
 	},
 	Doctor: {
 		id: "",
-		birthDate: new Date(),
-		creationDate: new Date(),
-		dni: "",
-		email: "",
-		firstName: "",
-		lastName: "",
-		locationAddress: "",
-		phone: "",
-		role: "",
-		sex: Sex.Male,
-		status: true,
-		updateDate: new Date()
+		data: {
+			birthDate: new Date(),
+			creationDate: new Date(),
+			dni: "",
+			email: "",
+			firstName: "",
+			lastName: "",
+			locationAddress: "",
+			phone: "",
+			role: "",
+			sex: Sex.Male,
+			status: true,
+			updateDate: new Date()
+		}
 	},
-	DoctorCreate: {
+	DoctorForm: {
 		birthDate: "",
-		creationDate: new Date(),
 		dni: "",
 		email: "",
 		firstName: "",
 		lastName: "",
 		locationAddress: "",
 		phone: "",
-		role: "",
-		sex: Sex.Male,
-		status: true,
-		updateDate: new Date()
+		sex: Sex.Male
 	},
 	Login: {
 		email: "",
@@ -52,23 +54,24 @@ export const DefaultValues: DefaultValue = {
 	},
 	Patient: {
 		id: "",
-		birthDate: new Date(),
-		creationDate: new Date(),
-		dni: "",
-		firstName: "",
-		lastName: "",
-		doctorNameCreation: "",
-		locationAddress: "",
-		phone: "",
-		sex: Sex.Male
+		data: {
+			birthDate: new Date(),
+			creationDate: new Date(),
+			dni: "",
+			firstName: "",
+			lastName: "",
+			nameDoctorCreation: "",
+			idDoctorCreation: "",
+			locationAddress: "",
+			phone: "",
+			sex: Sex.Male
+		}
 	},
-	PatientCreate: {
+	PatientForm: {
 		birthDate: "",
-		creationDate: new Date(),
 		dni: "",
 		firstName: "",
 		lastName: "",
-		doctorNameCreation: "",
 		locationAddress: "",
 		phone: "",
 		sex: Sex.Male

@@ -1,14 +1,24 @@
-import { Button } from "@/components/ui";
-import { LocalStorageKeys } from "@/constants";
-import { ToastIcons } from "@/constants/ui";
-import { ToastTitles, ToastTypes } from "@/enums";
-import { showToast } from "@/lib";
-import { authStore, globalStore } from "@/store";
+// React
 import { useEffect } from "react";
+
+// Components
+import { Button } from "@/components/ui";
+
+// Constants
+import { ToastIcons } from "@/constants/ui";
+
+// Stores
+import { authStore, globalStore } from "@/store";
+
+// Utils
+import { showToast } from "@/lib";
+
+// Enums & Types
+import { ToastTitles, ToastTypes } from "@/enums";
 
 export function Header(): React.ReactNode {
 	const { clearIsAuthenticated, signOutDoctor: signOutUser } = authStore();
-	const { errorMessage, clearErrorMessage, setErrorMessage } = globalStore();
+	const { errorMessage, clearErrorMessage, clearLocalStorage, setErrorMessage } = globalStore();
 
 	const signOutSession = async (): Promise<void> => {
 		const response: string = await signOutUser();
@@ -20,9 +30,7 @@ export function Header(): React.ReactNode {
 		}
 
 		clearIsAuthenticated();
-
-		localStorage.removeItem(LocalStorageKeys.Id);
-		localStorage.removeItem(LocalStorageKeys.Role);
+		clearLocalStorage();
 	};
 
 	useEffect((): void => {

@@ -16,5 +16,9 @@ import { DataTable } from "./datatable";
 import { ToastContent } from "./toast-content";
 import { Separator } from "./separator";
 import { Textarea } from "./textarea";
+import FormButtons from "./form-buttons";
+import FormTitle from "./form-title";
+import TooltipLayout from "./tooltip-layout";
+import DialogLayout from "./dialog-layout";
 
-export { useFormField, AlertDialog, AlertDialogPortal, AlertDialogOverlay, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel, Button, Checkbox, DataTable, Form, FormItem, FormLabel, FormControl, FormDescription, FormMessage, FormField, Header, Input, InputMask, Label, Loader, Popover, PopoverTrigger, PopoverContent, RadioGroup, RadioGroupItem, RadioGroupLayout, Select, SelectGroup, SelectValue, SelectTrigger, SelectContent, SelectLabel, SelectItem, SelectSeparator, SelectScrollUpButton, SelectScrollDownButton, Separator, Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption, Textarea, ToastContent, buttonVariants };
+export { useFormField, AlertDialog, AlertDialogPortal, AlertDialogOverlay, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel, Button, Checkbox, DataTable, DialogLayout, Form, FormButtons, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, FormTitle, Header, Input, InputMask, Label, Loader, Popover, PopoverTrigger, PopoverContent, RadioGroup, RadioGroupItem, RadioGroupLayout, Select, SelectGroup, SelectValue, SelectTrigger, SelectContent, SelectLabel, SelectItem, SelectSeparator, SelectScrollUpButton, SelectScrollDownButton, Separator, Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption, Textarea, ToastContent, TooltipLayout, buttonVariants };

@@ -1,3 +1,4 @@
+import { LocalStorageKeys } from "@/enums";
 import { GlobalStore } from "@/types/store";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
@@ -14,6 +15,11 @@ export const globalStore = create<GlobalStore>()(
 				false,
 				"CLEAR_ERROR_MESSAGE"
 			);
+		},
+		clearLocalStorage: (): void => {
+			Object.values(LocalStorageKeys).forEach((value: string) => {
+				localStorage.removeItem(value);
+			});
 		},
 		enableLoading: (): void => {
 			set(

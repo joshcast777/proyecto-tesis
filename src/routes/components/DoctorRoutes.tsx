@@ -1,5 +1,5 @@
 import { DoctorDashboard } from "@/views";
-import { PatientForm, PoseEstimationForm } from "@/views/doctor";
+import { FormPatient, PoseEstimationForm } from "@/views/doctor";
 import { Route, Routes } from "react-router-dom";
 
 export default function DoctorRoutes(): React.ReactNode {
@@ -9,9 +9,9 @@ export default function DoctorRoutes(): React.ReactNode {
 
 			<Route path="appointment/*">
 				<Route path="form/*">
-					<Route path="" element={<PatientForm />} />
+					<Route path="" element={<FormPatient />} />
 
-					<Route path=":id" element={<PatientForm />} />
+					<Route path=":id" element={<FormPatient />} />
 				</Route>
 
 				<Route path="pose-estimation/:id" element={<PoseEstimationForm />} />

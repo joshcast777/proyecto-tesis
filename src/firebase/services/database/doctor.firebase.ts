@@ -2,9 +2,8 @@
 
 import { ErrorMessages } from "@/constants";
 import { Collections, DoctorFields, QueryOperator, Roles } from "@/enums";
-import { ApiResponse, Doctor, DoctorCreate } from "@/types";
-import { parse } from "date-fns";
-import { CollectionReference, DocumentSnapshot, Firestore, Query, QueryDocumentSnapshot, QueryFieldFilterConstraint, QuerySnapshot, Timestamp, and, collection, doc, getDoc, getDocs, getFirestore, or, query, setDoc, where } from "firebase/firestore";
+import { ApiResponse, Doctor, DoctorData } from "@/types";
+import { CollectionReference, DocumentData, DocumentSnapshot, Firestore, Query, QueryDocumentSnapshot, QueryFieldFilterConstraint, QuerySnapshot, and, collection, doc, getDoc, getDocs, getFirestore, or, query, setDoc, where } from "firebase/firestore";
 import { app } from "../../firebase";
 import { errorApiResponse, successApiResponse } from "@/lib";
 
@@ -65,13 +64,17 @@ export async function firebaseGetDoctor(id: string): Promise<ApiResponse<Doctor>
 			});
 		}
 
+		const doctorData: DocumentData = doctorSnapshot.data();
+
 		return successApiResponse<Doctor>({
 			data: {
-				...(doctorSnapshot.data() as Doctor),
 				id: doctorSnapshot.id,
-				birthDate: (doctorSnapshot.data()[DoctorFields.BirthDate] as Timestamp).toDate(),
-				updateDate: (doctorSnapshot.data()[DoctorFields.UpdateDate] as Timestamp).toDate(),
-				creationDate: (doctorSnapshot.data()[DoctorFields.CreationDate] as Timestamp).toDate()
+				data: {
+					...(doctorData as DoctorData),
+					birthDate: doctorData[DoctorFields.BirthDate].toDate(),
+					updateDate: doctorData[DoctorFields.UpdateDate].toDate(),
+					creationDate: doctorData[DoctorFields.CreationDate].toDate()
+				}
 			}
 		});
 	} catch (error: any) {
@@ -93,26 +96,28 @@ export async function firebaseGetDoctors(): Promise<ApiResponse<Doctor[]>> {
 
 		const doctorsSnapshot: QuerySnapshot = await getDocs(doctorsQuery);
 
-		let doctors: Doctor[] = [];
-
 		if (doctorsSnapshot.size === 0) {
 			return successApiResponse<Doctor[]>({
-				data: structuredClone(doctors)
+				data: []
 			});
 		}
 
-		doctors = doctorsSnapshot.docs.map(
-			(doctor: QueryDocumentSnapshot): Doctor => ({
-				...(doctor.data() as Doctor),
-				birthDate: (doctor.data()[DoctorFields.BirthDate] as Timestamp).toDate(),
-				updateDate: (doctor.data()[DoctorFields.UpdateDate] as Timestamp).toDate(),
-				creationDate: (doctor.data()[DoctorFields.CreationDate] as Timestamp).toDate(),
-				id: doctor.id
-			})
-		);
+		const doctors: Doctor[] = doctorsSnapshot.docs.map((doctor: QueryDocumentSnapshot): Doctor => {
+			const doctorData: DocumentData = doctor.data();
+
+			return {
+				id: doctor.id,
+				data: {
+					...(doctorData as DoctorData),
+					birthDate: doctorData[DoctorFields.BirthDate].toDate(),
+					updateDate: doctorData[DoctorFields.UpdateDate].toDate(),
+					creationDate: doctorData[DoctorFields.CreationDate].toDate()
+				}
+			};
+		});
 
 		return successApiResponse<Doctor[]>({
-			data: structuredClone(doctors)
+			data: doctors
 		});
 	} catch (error: any) {
 		console.error(error);
@@ -123,12 +128,9 @@ export async function firebaseGetDoctors(): Promise<ApiResponse<Doctor[]>> {
 	}
 }
 
-export async function firebaseSaveDoctor(id: string, newDoctor: DoctorCreate): Promise<ApiResponse<null>> {
+export async function firebaseSaveDoctor(id: string, newDoctor: DoctorData): Promise<ApiResponse<null>> {
 	try {
-		await setDoc(doc(database, Collections.Doctors, id), {
-			...newDoctor,
-			birthDate: parse(newDoctor.birthDate, "dd/MM/yyyy", new Date())
-		});
+		await setDoc(doc(database, Collections.Doctors, id), newDoctor);
 
 		return successApiResponse<null>();
 	} catch (error: any) {

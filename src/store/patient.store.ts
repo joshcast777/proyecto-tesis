@@ -1,6 +1,6 @@
 import { DefaultValues, ErrorMessages } from "@/constants";
-import { firebaseEditPatient, firebaseGetCurrentAppointment, firebaseGetPatient, firebaseGetPatients, firebaseSavePatient } from "@/firebase/services/database";
-import { ApiResponse, Appointment, Patient, PatientCreate } from "@/types";
+import { firebaseEditPatient, firebaseGetAppointment, firebaseGetPatient, firebaseGetPatients, firebaseSavePatient } from "@/firebase/services/database";
+import { ApiResponse, Appointment, Patient, PatientData } from "@/types";
 import { PatientStore } from "@/types/store";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
@@ -37,22 +37,32 @@ export const patientStore = create<PatientStore>()(
 				"CLEAR_PATIENTS"
 			);
 		},
-		editPatient: async (newPatient: Patient): Promise<string> => {
-			const apiResponse: ApiResponse<Patient> = await firebaseEditPatient(newPatient);
+		editPatient: async (patient: Patient): Promise<string> => {
+			const apiResponse: ApiResponse<Patient> = await firebaseEditPatient(patient);
 
 			if (!apiResponse.success) {
 				return ErrorMessages.CouldNotCompleteTask;
 			}
 
+			set(
+				{
+					currentPatient: apiResponse.data!
+				},
+				false,
+				"SET_CURRENT_PATIENT"
+			);
+
 			return "";
 		},
-		getCurrentAppointment: async (): Promise<string> => {
-			const { currentPatient } = get();
+		getAppointment: async (): Promise<void> => {
+			const {
+				currentPatient: { id }
+			} = get();
 
-			const apiResponse: ApiResponse<Appointment> = await firebaseGetCurrentAppointment(currentPatient.id);
+			const apiResponse: ApiResponse<Appointment> = await firebaseGetAppointment(id);
 
 			if (!apiResponse.success) {
-				return apiResponse.message;
+				return;
 			}
 
 			set(
@@ -62,8 +72,6 @@ export const patientStore = create<PatientStore>()(
 				false,
 				"SET_CURRENT_APPOINTMENT"
 			);
-
-			return "";
 		},
 		getPatient: async (id: string): Promise<string> => {
 			const apiResponse: ApiResponse<Patient> = await firebaseGetPatient(id);
@@ -97,7 +105,7 @@ export const patientStore = create<PatientStore>()(
 				"SET_PATIENTS"
 			);
 		},
-		savePatient: async (newPatient: PatientCreate): Promise<string> => {
+		savePatient: async (newPatient: PatientData): Promise<string> => {
 			const apiResponse: ApiResponse<Patient> = await firebaseSavePatient(newPatient);
 
 			if (!apiResponse.success) {

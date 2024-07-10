@@ -1,7 +1,11 @@
+import { Global } from "./global.type";
 import { Sex } from "@/enums";
 
-export type Doctor = {
-	id: string;
+export type Doctor = Global & {
+	data: DoctorData;
+};
+
+export type DoctorData = {
 	birthDate: Date;
 	creationDate: Date;
 	dni: string;
@@ -14,6 +18,17 @@ export type Doctor = {
 	sex: Sex;
 	status: boolean;
 	updateDate: Date;
+};
+
+export type DoctorForm = {
+	birthDate: string;
+	dni: string;
+	email: string;
+	firstName: string;
+	lastName: string;
+	locationAddress: string;
+	phone: string;
+	sex: Sex;
 };
 
 export type DoctorCreate = {

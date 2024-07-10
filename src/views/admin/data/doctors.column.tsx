@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui";
+import { Button, TooltipLayout } from "@/components/ui";
 import { ToastIcons } from "@/constants/ui";
 import { ToastTitles, ToastTypes } from "@/enums";
 import { cn, showToast } from "@/lib";
@@ -129,26 +129,36 @@ export const columns: ColumnDef<DoctorTable>[] = [
 
 			return (
 				<div className="flex items-center justify-center gap-2">
-					<Button
-						size="icon"
-						className="bg-yellow-500 hover:bg-yellow-400"
-						onClick={(): void => {
-							navigate(`/admin/doctor/form/${id}`);
-						}}
-					>
-						<Pencil className="h-4 w-4" />
-					</Button>
+					<TooltipLayout
+						triggerContent={(): React.ReactNode => (
+							<Button
+								size="icon"
+								className="bg-yellow-500 hover:bg-yellow-400"
+								onClick={(): void => {
+									navigate(`/admin/doctor/form/${id}`);
+								}}
+							>
+								<Pencil className="h-4 w-4" />
+							</Button>
+						)}
+						content={(): React.ReactNode => <p>Editar</p>}
+					/>
 
-					<Button
-						size="icon"
-						className={cn({
-							"bg-red-500 hover:bg-red-400": status,
-							"bg-green-500 hover:bg-green-400": !status
-						})}
-						onClick={onDeleteDoctor}
-					>
-						{status ? <Trash2 className="h-4 w-4" /> : <ArchiveRestore className="h-4 w-4" />}
-					</Button>
+					<TooltipLayout
+						triggerContent={(): React.ReactNode => (
+							<Button
+								size="icon"
+								className={cn({
+									"bg-red-500 hover:bg-red-400": status,
+									"bg-green-500 hover:bg-green-400": !status
+								})}
+								onClick={onDeleteDoctor}
+							>
+								{status ? <Trash2 className="h-4 w-4" /> : <ArchiveRestore className="h-4 w-4" />}
+							</Button>
+						)}
+						content={(): React.ReactNode => <p>{status ? "Eliminar" : "Restaurar"}</p>}
+					/>
 				</div>
 			);
 		}

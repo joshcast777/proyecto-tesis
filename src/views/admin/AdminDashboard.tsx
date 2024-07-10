@@ -1,11 +1,30 @@
-import { Button, DataTable, Header, Loader } from "@/components/ui";
-import { doctorStore, globalStore } from "@/store";
-import { Doctor, DoctorTable } from "@/types";
-import { format } from "date-fns";
+// React
 import React, { useEffect } from "react";
+
+// React Router Dom
 import { NavigateFunction, useNavigate } from "react-router-dom";
+
+// Components
+import { Button, DataTable, Header, Loader } from "@/components/ui";
+
+// Stores
+import { doctorStore, globalStore } from "@/store";
+
+// Enums & Types
+import { Doctor, DoctorTable } from "@/types";
+
+// Data
 import { columns } from "./data";
 
+// Libraries
+import { format } from "date-fns";
+
+/**
+ * A React component that renders the admin dashboard.
+ *
+ * @export
+ * @returns {React.ReactNode} The rendered admin dashboard page.
+ */
 export default function AdminDashboard(): React.ReactNode {
 	const { doctors, clearDoctors, getDoctors } = doctorStore();
 	const { isLoading, disableLoading, enableLoading } = globalStore();
@@ -16,15 +35,15 @@ export default function AdminDashboard(): React.ReactNode {
 		navigate("/admin/doctor/form");
 	};
 
+	const execAsync = async (): Promise<void> => {
+		enableLoading();
+
+		await getDoctors();
+
+		disableLoading();
+	};
+
 	useEffect((): (() => void) => {
-		const execAsync = async (): Promise<void> => {
-			enableLoading();
-
-			await getDoctors();
-
-			disableLoading();
-		};
-
 		execAsync();
 
 		return (): void => {
@@ -48,11 +67,12 @@ export default function AdminDashboard(): React.ReactNode {
 				<DataTable
 					columns={columns}
 					data={doctors.map(
-						(doctor: Doctor, index: number): DoctorTable => ({
-							...doctor,
+						({ id, data }: Doctor, index: number): DoctorTable => ({
+							...data,
+							id,
 							index: index + 1,
-							status: doctor.status,
-							updateDate: format(doctor.updateDate, "dd/MM/yyyy"),
+							status: data.status,
+							updateDate: format(data.updateDate, "dd/MM/yyyy"),
 							actions: <></>
 						})
 					)}

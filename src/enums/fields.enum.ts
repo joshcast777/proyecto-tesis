@@ -19,6 +19,17 @@ export enum DoctorFields {
 	UpdateDate = "updateDate"
 }
 
+export enum DoctorFormFields {
+	Dni = "dni",
+	FirstName = "firstName",
+	LastName = "lastName",
+	BirthDate = "birthDate",
+	Sex = "sex",
+	Phone = "phone",
+	Email = "email",
+	LocationAddress = "locationAddress"
+}
+
 export enum PatientFields {
 	Id = "id",
 	Appointments = "appointments",
@@ -32,6 +43,16 @@ export enum PatientFields {
 	LocationAddress = "locationAddress",
 	Phone = "phone",
 	Sex = "sex"
+}
+
+export enum PatientFormFields {
+	Dni = "dni",
+	FirstName = "firstName",
+	LastName = "lastName",
+	BirthDate = "birthDate",
+	Sex = "sex",
+	Phone = "phone",
+	LocationAddress = "locationAddress"
 }
 
 export enum AppointmentFields {

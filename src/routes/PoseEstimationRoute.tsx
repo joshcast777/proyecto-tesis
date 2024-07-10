@@ -1,16 +1,14 @@
-import { LocalStorageKeys } from "@/constants";
-import { authStore, doctorStore, globalStore } from "@/store";
+import { LocalStorageKeys } from "@/enums";
+import { authStore, globalStore } from "@/store";
 import { Auth } from "@/views";
 import { useEffect } from "react";
-import { Doctor } from "@/types";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { PrivateRoute, PublicRoute } from "./components";
 import AdminRoutes from "./components/AdminRoutes";
 import DoctorRoutes from "./components/DoctorRoutes";
 
 export default function PoseEstimationRoute(): React.ReactNode {
-	const { isAuthenticated, clearIsAuthenticated, setIsAuthenticated } = authStore();
-	const { getDoctor } = doctorStore();
+	const { isAuthenticated, clearIsAuthenticated, getCurrentDoctor } = authStore();
 	const { enableLoading, disableLoading } = globalStore();
 
 	const asyncFunction = async (): Promise<void> => {
@@ -27,9 +25,9 @@ export default function PoseEstimationRoute(): React.ReactNode {
 			return;
 		}
 
-		const response: Doctor | string = await getDoctor(localStorage.getItem(LocalStorageKeys.Id)!);
+		const response: string = await getCurrentDoctor(localStorage.getItem(LocalStorageKeys.Id)!);
 
-		if (typeof response === "string") {
+		if (response !== "") {
 			localStorage.removeItem(LocalStorageKeys.Id);
 			localStorage.removeItem(LocalStorageKeys.Role);
 
@@ -39,8 +37,6 @@ export default function PoseEstimationRoute(): React.ReactNode {
 
 			return;
 		}
-
-		setIsAuthenticated(response);
 
 		disableLoading();
 	};
