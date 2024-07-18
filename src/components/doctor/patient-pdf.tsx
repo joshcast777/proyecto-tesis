@@ -125,19 +125,19 @@ export default function PatientPdf(): React.ReactNode {
 							<Data>
 								<Label label="Nombres:" />
 
-								<Value value="Miguel Joshua" />
+								<Value value="Víctor" />
 							</Data>
 
 							<Data>
 								<Label label="Apellidos:" />
 
-								<Value value="Castillo Riofrío" />
+								<Value value="Varas" />
 							</Data>
 						</View>
 
 						<Label label="Fecha de nacimiento:" />
 
-						<Value value="05-10-1999" />
+						<Value value="10-10-1999" />
 
 						<Label label="Edad:" />
 

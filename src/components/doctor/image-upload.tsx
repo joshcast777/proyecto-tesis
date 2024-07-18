@@ -10,7 +10,7 @@ export default function ImageUpload({ uploadedImageSrc }: ImageUploadProps): Rea
 			<img
 				className={cn("h-full w-full rounded", {
 					"object-cover": uploadedImageSrc.includes("assets"),
-					"object-contain": !Boolean(uploadedImageSrc.includes("assets"))
+					"object-contain": !uploadedImageSrc.includes("assets")
 				})}
 				src={uploadedImageSrc}
 				alt="Uploaded image"

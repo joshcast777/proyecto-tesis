@@ -2,7 +2,7 @@ import { ImageButtons, ImageUpload } from "@/components/doctor";
 import { FormButtons, FormTitle, Loader, Separator, Textarea } from "@/components/ui";
 import { ToastIcons } from "@/constants/ui";
 import { LocalStorageKeys, ToastTitles, ToastTypes } from "@/enums";
-import { showToast } from "@/lib";
+import { cn, showToast } from "@/lib";
 import { authStore, globalStore, patientStore } from "@/store";
 import { AppointmentData, ImagesBlob, ImagesDownloadLink, Patient } from "@/types";
 import { useEffect, useState } from "react";
@@ -242,7 +242,14 @@ export default function FormPoseEstimation(): React.ReactNode {
 						<Separator className="md:hidden" />
 
 						<div className="flex aspect-[9/14] w-full items-center justify-center rounded border border-gray-500 md:w-1/2">
-							<img className="cover h-full w-full rounded object-cover" src={poseEstimationValue.estimatedImage} alt="Pose estimated" />
+							<img
+								className={cn("cover h-full w-full rounded", {
+									"object-cover": poseEstimationValue.estimatedImage.includes("assets"),
+									"object-contain": !poseEstimationValue.estimatedImage.includes("assets")
+								})}
+								src={poseEstimationValue.estimatedImage}
+								alt="Pose estimated"
+							/>
 						</div>
 					</div>
 
