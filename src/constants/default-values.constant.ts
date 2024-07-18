@@ -18,7 +18,9 @@ export const DefaultValues: DefaultValue = {
 			date: new Date(),
 			idDoctor: "",
 			nameDoctor: "",
-			summary: ""
+			summary: "",
+			estimatedImageLink: "",
+			uploadedImageLink: ""
 		}
 	},
 	Doctor: {
@@ -55,6 +57,7 @@ export const DefaultValues: DefaultValue = {
 	Patient: {
 		id: "",
 		data: {
+			lastAppointmentDate: new Date(),
 			birthDate: new Date(),
 			creationDate: new Date(),
 			dni: "",

@@ -1,8 +1,12 @@
+import { LocalStorageKeys } from "@/enums";
+import { patientStore } from "@/store";
 import { DoctorDashboard } from "@/views";
-import { FormPatient, PoseEstimationForm } from "@/views/doctor";
-import { Route, Routes } from "react-router-dom";
+import { FormPatient, FormPoseEstimation } from "@/views/doctor";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 export default function DoctorRoutes(): React.ReactNode {
+	const { currentPatient } = patientStore();
+
 	return (
 		<Routes>
 			<Route path="dashboard" element={<DoctorDashboard />} />
@@ -14,7 +18,7 @@ export default function DoctorRoutes(): React.ReactNode {
 					<Route path=":id" element={<FormPatient />} />
 				</Route>
 
-				<Route path="pose-estimation/:id" element={<PoseEstimationForm />} />
+				<Route path="pose-estimation/:id" element={currentPatient.id !== "" ? <FormPoseEstimation /> : <Navigate to={`/${localStorage.getItem(LocalStorageKeys.Role)}/dashboard`} />} />
 			</Route>
 		</Routes>
 	);

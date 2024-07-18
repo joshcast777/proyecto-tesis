@@ -1,5 +1,12 @@
+import { QueryDocumentSnapshot } from "firebase/firestore";
 import { Global } from "./global.type";
 import { Sex } from "@/enums";
+
+export type PatientReferences = {
+	firstPatientDocumentSnapshot: null | QueryDocumentSnapshot;
+	lastPatientDocumentSnapshot: null | QueryDocumentSnapshot;
+	patients: Patient[];
+};
 
 export type Patient = Global & {
 	data: PatientData;
@@ -13,6 +20,7 @@ export type PatientData = {
 	lastName: string;
 	nameDoctorCreation: string;
 	idDoctorCreation: string;
+	lastAppointmentDate: null | Date;
 	locationAddress: string;
 	phone: string;
 	sex: Sex;
@@ -34,9 +42,21 @@ export type Appointment = Global & {
 
 export type AppointmentData = {
 	date: Date;
-	nameDoctor: string;
+	estimatedImageLink: string;
 	idDoctor: string;
+	nameDoctor: string;
 	summary: string;
+	uploadedImageLink: string;
+};
+
+export type ImagesBlob = {
+	type: "U" | "E";
+	image: Blob;
+};
+
+export type ImagesDownloadLink = {
+	type: "U" | "E";
+	downloadLink: string;
 };
 
 export type PatientTable = {

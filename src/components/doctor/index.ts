@@ -1,4 +1,4 @@
-import DoctorFormControl from "./doctor-form-control";
+import ImageButtons from "./image-buttons";
 import ImageUpload from "./image-upload";
 
-export { DoctorFormControl, ImageUpload };
+export { ImageButtons, ImageUpload };

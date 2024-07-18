@@ -11,12 +11,16 @@ import { globalStore } from "@/store";
  * Props for the `FormButtons` component.
  */
 type FormButtonsProps = {
-	disabled: boolean;
+	disabled?: boolean;
+	disabledResetButton?: boolean;
+	disabledSaveButton?: boolean;
 	resetButtonLabel: string;
-	resetFunction: () => void;
-	route: string;
+	resetRoute: string;
 	saveButtonLabel: string;
+	saveButtonType?: "submit" | "button";
 	waitingButtonLabel: string | React.ReactNode;
+	resetFunction: () => void;
+	saveFunction?: () => void;
 };
 
 /**
@@ -34,7 +38,7 @@ type FormButtonsProps = {
  *
  * @returns {React.ReactNode}
  */
-export default function FormButtons({ disabled, resetButtonLabel, resetFunction, route, saveButtonLabel, waitingButtonLabel }: FormButtonsProps): React.ReactNode {
+export default function FormButtons({ disabled = false, disabledResetButton = false, disabledSaveButton = false, resetButtonLabel, resetRoute, saveButtonLabel, saveButtonType = "submit", waitingButtonLabel, resetFunction, saveFunction }: FormButtonsProps): React.ReactNode {
 	const { isLoading } = globalStore();
 
 	const navigate: NavigateFunction = useNavigate();
@@ -44,20 +48,29 @@ export default function FormButtons({ disabled, resetButtonLabel, resetFunction,
 			<Button
 				type="reset"
 				variant="outline"
-				disabled={disabled}
+				disabled={disabled || disabledResetButton}
 				onClick={(): void => {
 					resetFunction();
 
-					navigate(route, {
+					navigate(resetRoute, {
 						replace: true
 					});
 				}}
-				className="w-28 lg:text-lg"
+				className="w-28 border-blue-700 text-blue-700 hover:bg-blue-50 hover:text-blue-700 lg:text-lg"
 			>
 				{resetButtonLabel}
 			</Button>
 
-			<Button type="submit" disabled={disabled} className="min-w-28 lg:text-lg">
+			<Button
+				type={saveButtonType}
+				disabled={disabled || disabledSaveButton}
+				onClick={(): void => {
+					if (saveButtonType === "button" && saveFunction !== undefined) {
+						saveFunction();
+					}
+				}}
+				className="min-w-28 bg-blue-700 hover:bg-blue-800 lg:text-lg"
+			>
 				{isLoading ? waitingButtonLabel : saveButtonLabel}
 			</Button>
 		</div>

@@ -1,7 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { Form, FormButtons, FormField, FormTitle, InputMask, Loader, RadioGroup, RadioGroupLayout, Separator } from "@/components/ui";
+import { LastAppointmentSummary } from "@/components/patient";
+import { Form, FormButtons, FormControl, FormField, FormItem, FormLabel, FormMessage, FormTitle, Input, InputMask, Loader, RadioGroup, RadioGroupLayout, Separator } from "@/components/ui";
 import { DefaultValues } from "@/constants";
 import { ToastIcons } from "@/constants/ui";
 import { sex } from "@/data";
@@ -14,7 +15,8 @@ import { format, parse } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
-import { LastAppointmentSummary, PatientFormControl } from "@/components/patient";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import PatientPdf from "@/components/doctor/patient-pdf";
 
 export default function FormPatient(): React.ReactNode {
 	const [disabled, setDisabled] = useState<boolean>(false);
@@ -41,7 +43,7 @@ export default function FormPatient(): React.ReactNode {
 	});
 
 	const onSubmit: SubmitHandler<PatientForm> = async (formData: PatientForm): Promise<void> => {
-		if (!form.formState.isDirty) {
+		if (idParam !== undefined && !form.formState.isDirty) {
 			navigate(`/doctor/appointment/pose-estimation/${idParam}`, {
 				replace: true
 			});
@@ -54,6 +56,7 @@ export default function FormPatient(): React.ReactNode {
 
 		const newPatient: PatientData = {
 			...structuredClone(formData),
+			lastAppointmentDate: Boolean(idParam) ? dataPatient.lastAppointmentDate : null,
 			birthDate: Boolean(idParam) ? dataPatient.birthDate : parse(formData.birthDate, "dd/MM/yyyy", new Date()),
 			creationDate: Boolean(idParam) ? dataPatient.creationDate : new Date(),
 			nameDoctorCreation: Boolean(idParam) ? dataPatient.nameDoctorCreation : `${currentDoctor.data.firstName} ${currentDoctor.data.lastName}`,
@@ -115,12 +118,14 @@ export default function FormPatient(): React.ReactNode {
 		disableLoading();
 	};
 
-	useEffect((): void => {
+	useEffect((): (() => void) => {
 		if (idParam !== undefined) {
 			getPatientData();
 		}
 
-		console.log(isLoading);
+		return (): void => {
+			clearCurrentAppointment();
+		};
 	}, []);
 
 	useEffect((): void => {
@@ -132,8 +137,6 @@ export default function FormPatient(): React.ReactNode {
 
 			getAppointmentData();
 		}
-
-		console.log(isLoading);
 	}, [idPatient]);
 
 	useEffect((): void => {
@@ -152,6 +155,10 @@ export default function FormPatient(): React.ReactNode {
 		<>
 			{isLoading && <Loader />}
 
+			<PDFDownloadLink document={<PatientPdf />} fileName={`paciente-${format(new Date(), "dd-MM-yyyy")}`}>
+				<button>Exportar</button>
+			</PDFDownloadLink>
+
 			<div className="flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url('/src/assets/images/background-patient.webp')] bg-cover bg-center bg-no-repeat p-8">
 				<div className="container rounded bg-blue-300/75 p-5 text-gray-900 lg:max-w-[1024px]">
 					<FormTitle>Información del paciente</FormTitle>
@@ -159,30 +166,110 @@ export default function FormPatient(): React.ReactNode {
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="mt-10">
 							<div className="space-5 sm:grid sm:grid-cols-2 sm:gap-5">
-								<FormField control={form.control} name={PatientFormFields.Dni} render={({ field }): React.ReactElement => <PatientFormControl<PatientFormFields> controlState={Boolean(form.formState.errors.dni)} disabled={idParam !== undefined} field={field} label="Cédula" placeholder="Cédula" type="text" />} />
+								<FormField
+									control={form.control}
+									name={PatientFormFields.Dni}
+									render={({ field }): React.ReactElement => (
+										<FormItem>
+											<FormLabel className="text-lg">Cédula</FormLabel>
 
-								<FormField control={form.control} name={PatientFormFields.FirstName} render={({ field }): React.ReactElement => <PatientFormControl<PatientFormFields> controlState={Boolean(form.formState.errors.firstName)} disabled={idParam !== undefined} field={field} label="Nombre" placeholder="Nombre" type="text" />} />
+											<FormControl>
+												<Input
+													{...field}
+													type="text"
+													placeholder="0000000000"
+													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.dni)
+													})}
+													disabled={idParam !== undefined}
+												/>
+											</FormControl>
 
-								<FormField control={form.control} name={PatientFormFields.LastName} render={({ field }): React.ReactElement => <PatientFormControl<PatientFormFields> controlState={Boolean(form.formState.errors.lastName)} disabled={idParam !== undefined} field={field} label="Apellido" placeholder="Apellido" type="text" />} />
+											<div className="h-5">
+												<FormMessage />
+											</div>
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={form.control}
+									name={PatientFormFields.FirstName}
+									render={({ field }): React.ReactElement => (
+										<FormItem>
+											<FormLabel className="text-lg">Nombre</FormLabel>
+
+											<FormControl>
+												<Input
+													{...field}
+													type="text"
+													placeholder="Víctor"
+													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.firstName)
+													})}
+													disabled={idParam !== undefined}
+												/>
+											</FormControl>
+
+											<div className="h-5">
+												<FormMessage />
+											</div>
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={form.control}
+									name={PatientFormFields.LastName}
+									render={({ field }): React.ReactElement => (
+										<FormItem>
+											<FormLabel className="text-lg">Apellido</FormLabel>
+
+											<FormControl>
+												<Input
+													{...field}
+													type="text"
+													placeholder="Varas"
+													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.lastName)
+													})}
+													disabled={idParam !== undefined}
+												/>
+											</FormControl>
+
+											<div className="h-5">
+												<FormMessage />
+											</div>
+										</FormItem>
+									)}
+								/>
 
 								<FormField
 									control={form.control}
 									name={PatientFormFields.BirthDate}
 									render={({ field }): React.ReactElement => (
-										<PatientFormControl<PatientFormFields> controlState={Boolean(form.formState.errors.birthDate)} disabled={idParam !== undefined} field={field} label="Fecha de nacimiento" placeholder="Fecha de nacimiento" type="text">
-											<InputMask
-												mask="99/99/9999"
-												className={cn("flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-base placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:text-gray-900 disabled:opacity-50 md:h-12", {
-													"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.lastName)
-												})}
-												onChange={field.onChange}
-												onBlur={field.onBlur}
-												value={field.value}
-												ref={field.ref}
-												name={field.name}
-												disabled={idParam !== undefined}
-											/>
-										</PatientFormControl>
+										<FormItem>
+											<FormLabel className="text-lg">Fecha de nacimiento</FormLabel>
+
+											<FormControl>
+												<InputMask
+													mask="99/99/9999"
+													className={cn("flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-base placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:text-gray-900 disabled:opacity-50 md:h-12", {
+														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.birthDate)
+													})}
+													onChange={field.onChange}
+													onBlur={field.onBlur}
+													value={field.value}
+													ref={field.ref}
+													name={field.name}
+													disabled={idParam !== undefined}
+												/>
+											</FormControl>
+
+											<div className="h-5">
+												<FormMessage />
+											</div>
+										</FormItem>
 									)}
 								/>
 
@@ -190,21 +277,77 @@ export default function FormPatient(): React.ReactNode {
 									control={form.control}
 									name={PatientFormFields.Sex}
 									render={({ field }): React.ReactElement => (
-										<PatientFormControl<PatientFormFields> controlState={Boolean(form.formState.errors.sex)} disabled={idParam !== undefined} field={field} label="Sexo" placeholder="Sexo" type="radio">
-											<RadioGroup onValueChange={field.onChange} defaultValue={field.value} value={field.value} className="flex h-10 w-56 justify-between md:h-12">
-												{sex.map(
-													(s: SexData): React.ReactNode => (
-														<RadioGroupLayout key={s.value} sexData={s} disable={idParam !== undefined} />
-													)
-												)}
-											</RadioGroup>
-										</PatientFormControl>
+										<FormItem>
+											<FormLabel className="text-lg">Sexo</FormLabel>
+
+											<FormControl>
+												<RadioGroup onValueChange={field.onChange} defaultValue={field.value} value={field.value} className="flex h-10 w-56 justify-between md:h-12">
+													{sex.map(
+														(s: SexData): React.ReactNode => (
+															<RadioGroupLayout key={s.value} sexData={s} disable={idParam !== undefined} />
+														)
+													)}
+												</RadioGroup>
+											</FormControl>
+
+											<div className="h-5">
+												<FormMessage />
+											</div>
+										</FormItem>
 									)}
 								/>
 
-								<FormField control={form.control} name={PatientFormFields.Phone} render={({ field }): React.ReactElement => <PatientFormControl<PatientFormFields> controlState={Boolean(form.formState.errors.phone)} field={field} label="Celular" placeholder="Celular" type="text" />} />
+								<FormField
+									control={form.control}
+									name={PatientFormFields.Phone}
+									render={({ field }): React.ReactElement => (
+										<FormItem>
+											<FormLabel className="text-lg">Celular</FormLabel>
 
-								<FormField control={form.control} name={PatientFormFields.LocationAddress} render={({ field }): React.ReactElement => <PatientFormControl<PatientFormFields> controlState={Boolean(form.formState.errors.locationAddress)} field={field} label="Dirección" placeholder="Dirección" type="text" />} />
+											<FormControl>
+												<Input
+													{...field}
+													type="phone"
+													placeholder="0000000000"
+													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.phone)
+													})}
+													disabled={idParam !== undefined}
+												/>
+											</FormControl>
+
+											<div className="h-5">
+												<FormMessage />
+											</div>
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={form.control}
+									name={PatientFormFields.LocationAddress}
+									render={({ field }): React.ReactElement => (
+										<FormItem>
+											<FormLabel className="text-lg">Dirección</FormLabel>
+
+											<FormControl>
+												<Input
+													{...field}
+													type="text"
+													placeholder="Guayaquil, Av. 9 de Octubre"
+													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.locationAddress)
+													})}
+													disabled={idParam !== undefined}
+												/>
+											</FormControl>
+
+											<div className="h-5">
+												<FormMessage />
+											</div>
+										</FormItem>
+									)}
+								/>
 							</div>
 
 							{idParam === undefined ? (
@@ -212,7 +355,7 @@ export default function FormPatient(): React.ReactNode {
 									disabled={disabled}
 									resetButtonLabel="Cancelar"
 									resetFunction={form.reset}
-									route="/doctor/dashboard"
+									resetRoute="/doctor/dashboard"
 									saveButtonLabel="Continuar"
 									waitingButtonLabel={
 										<>
@@ -236,7 +379,7 @@ export default function FormPatient(): React.ReactNode {
 											clearCurrentPatient();
 											clearCurrentAppointment();
 										}}
-										route="/doctor/dashboard"
+										resetRoute="/doctor/dashboard"
 										saveButtonLabel="Continuar"
 										waitingButtonLabel={
 											<>

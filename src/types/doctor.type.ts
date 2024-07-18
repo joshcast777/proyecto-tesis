@@ -51,8 +51,7 @@ export type DoctorTable = {
 	index: number;
 	dni: string;
 	email: string;
-	firstName: string;
-	lastName: string;
+	fullName: string;
 	phone: string;
 	status: boolean;
 	updateDate: string;

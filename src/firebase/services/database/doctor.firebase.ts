@@ -40,9 +40,9 @@ export async function firebaseCheckDoctor(email: string): Promise<ApiResponse<nu
 
 export async function firebaseDeleteDoctor(doctor: Doctor): Promise<ApiResponse<null>> {
 	try {
-		const { id, ...newDoctor } = doctor;
+		const { id, data } = doctor;
 
-		await setDoc(doc(database, Collections.Doctors, id), newDoctor);
+		await setDoc(doc(database, Collections.Doctors, id), data);
 
 		return successApiResponse<null>();
 	} catch (error: any) {

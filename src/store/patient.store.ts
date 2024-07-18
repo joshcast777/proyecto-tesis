@@ -1,6 +1,7 @@
 import { DefaultValues, ErrorMessages } from "@/constants";
-import { firebaseEditPatient, firebaseGetAppointment, firebaseGetPatient, firebaseGetPatients, firebaseSavePatient } from "@/firebase/services/database";
-import { ApiResponse, Appointment, Patient, PatientData } from "@/types";
+import { firebaseEditPatient, firebaseGetAppointment, firebaseGetPatient, firebaseGetPatients, firebaseSaveAppointment, firebaseSavePatient } from "@/firebase/services/database";
+import { firebaseUploadImages } from "@/firebase/services/storage";
+import { ApiResponse, Appointment, AppointmentData, ImagesBlob, ImagesDownloadLink, Patient, PatientData, PatientReferences } from "@/types";
 import { PatientStore } from "@/types/store";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
@@ -9,7 +10,11 @@ export const patientStore = create<PatientStore>()(
 	devtools((set, get) => ({
 		currentAppointment: DefaultValues.Appointment,
 		currentPatient: DefaultValues.Patient,
+		firstPatientDocumentSnapshot: null,
+		lastPatientDocumentSnapshot: null,
 		patients: [],
+		tablePage: 1,
+		tableSize: 3,
 		clearCurrentAppointment: (): void => {
 			set(
 				{
@@ -73,6 +78,7 @@ export const patientStore = create<PatientStore>()(
 				"SET_CURRENT_APPOINTMENT"
 			);
 		},
+		// getNextPatients: async (): Promise<void> => {},
 		getPatient: async (id: string): Promise<string> => {
 			const apiResponse: ApiResponse<Patient> = await firebaseGetPatient(id);
 
@@ -91,7 +97,7 @@ export const patientStore = create<PatientStore>()(
 			return "";
 		},
 		getPatients: async (): Promise<void> => {
-			const apiResponse: ApiResponse<Patient[]> = await firebaseGetPatients();
+			const apiResponse: ApiResponse<PatientReferences> = await firebaseGetPatients();
 
 			if (!apiResponse.success) {
 				return;
@@ -99,11 +105,34 @@ export const patientStore = create<PatientStore>()(
 
 			set(
 				{
-					patients: apiResponse.data!
+					firstPatientDocumentSnapshot: apiResponse.data!.firstPatientDocumentSnapshot,
+					lastPatientDocumentSnapshot: apiResponse.data!.lastPatientDocumentSnapshot,
+					patients: apiResponse.data!.patients
 				},
 				false,
 				"SET_PATIENTS"
 			);
+		},
+		saveAppointment: async (newAppointment: AppointmentData): Promise<string> => {
+			const {
+				currentPatient: { id }
+			} = get();
+
+			const apiResponse: ApiResponse<Appointment> = await firebaseSaveAppointment(newAppointment, id);
+
+			if (!apiResponse.success) {
+				return ErrorMessages.CouldNotCompleteTask;
+			}
+
+			set(
+				{
+					currentAppointment: apiResponse.data!
+				},
+				false,
+				"SET_CURRENT_APPOINTMENT"
+			);
+
+			return "";
 		},
 		savePatient: async (newPatient: PatientData): Promise<string> => {
 			const apiResponse: ApiResponse<Patient> = await firebaseSavePatient(newPatient);
@@ -121,6 +150,31 @@ export const patientStore = create<PatientStore>()(
 			);
 
 			return "";
+		},
+		setTablePage: (tablePage: number): void => {
+			set(
+				{
+					tablePage
+				},
+				false,
+				"SET_TABLE_PAGE"
+			);
+		},
+		setTableSize: (tableSize: number): void => {
+			set(
+				{
+					tableSize
+				},
+				false,
+				"SET_TABLE_SIZE"
+			);
+		},
+		uploadImages: async (images: ImagesBlob[]): Promise<ImagesDownloadLink[]> => {
+			const { currentPatient } = get();
+
+			const apiResponse: ApiResponse<ImagesDownloadLink[]> = await firebaseUploadImages(images, currentPatient.id);
+
+			return apiResponse.data!;
 		}
 	}))
 );

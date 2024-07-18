@@ -8,8 +8,7 @@ import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 // Components
-import { DoctorFormControl } from "@/components/doctor";
-import { Form, FormButtons, FormField, FormTitle, InputMask, Loader, RadioGroup, RadioGroupLayout } from "@/components/ui";
+import { Form, FormButtons, FormControl, FormField, FormItem, FormLabel, FormMessage, FormTitle, Input, InputMask, Loader, RadioGroup, RadioGroupLayout } from "@/components/ui";
 import { Loader2 } from "lucide-react";
 
 // Constants
@@ -25,100 +24,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 // Enums & Types
 import { DoctorFormFields, Roles, ToastTitles, ToastTypes } from "@/enums";
-import { DoctorForm, DoctorData, SexData } from "@/types";
+import { DoctorData, DoctorForm, SexData } from "@/types";
 
 // Libraries
-import { format, parse } from "date-fns";
-import { cn, showToast } from "@/lib";
 import { sex } from "@/data";
-
-// /**
-//  * Type representing the authentication fields.
-//  */
-// type DoctorFieldObjects = {
-// 	fieldName: DoctorFormFields;
-// 	label: string;
-// 	type: string;
-// 	placeholder: string;
-// };
-
-// /**
-//  * Object representing the labels of the authentication form.
-//  *
-//  * @type {DoctorForm}
-//  */
-// const doctorFieldLabels: Omit<DoctorForm, "sex"> & { sex: string } = {
-// 	[DoctorFormFields.Dni]: "Cédula",
-// 	[DoctorFormFields.FirstName]: "Nombre",
-// 	[DoctorFormFields.LastName]: "Apellido",
-// 	[DoctorFormFields.BirthDate]: "Fecha de nacimiento",
-// 	[DoctorFormFields.Email]: "Correo",
-// 	[DoctorFormFields.Sex]: "Sexo",
-// 	[DoctorFormFields.Phone]: "Celular",
-// 	[DoctorFormFields.LocationAddress]: "Dirección domiciliaria"
-// };
-
-// /**
-//  * Object representing the type of the authentication form.
-//  *
-//  * @type {DoctorForm}
-//  */
-// const doctorTypes: Omit<DoctorForm, "sex"> & { sex: string } = {
-// 	[DoctorFormFields.Dni]: "text",
-// 	[DoctorFormFields.FirstName]: "text",
-// 	[DoctorFormFields.LastName]: "text",
-// 	[DoctorFormFields.BirthDate]: "text",
-// 	[DoctorFormFields.Email]: "text",
-// 	[DoctorFormFields.Sex]: "radio",
-// 	[DoctorFormFields.Phone]: "text",
-// 	[DoctorFormFields.LocationAddress]: "text"
-// };
-
-// /**
-//  * Object representing the type of the authentication form.
-//  *
-//  * @type {DoctorForm}
-//  */
-// const doctorPlaceholders: Omit<DoctorForm, "sex"> & { sex: string } = {
-// 	[DoctorFormFields.Dni]: "Cédula",
-// 	[DoctorFormFields.FirstName]: "Nombre",
-// 	[DoctorFormFields.LastName]: "Apellido",
-// 	[DoctorFormFields.BirthDate]: "Fecha de nacimiento",
-// 	[DoctorFormFields.Email]: "Correo",
-// 	[DoctorFormFields.Sex]: "sexo",
-// 	[DoctorFormFields.Phone]: "Celular",
-// 	[DoctorFormFields.LocationAddress]: "Dirección domiciliaria"
-// };
-
-// /**
-//  * Object representing the type of the authentication form.
-//  *
-//  * @type {DoctorForm}
-//  */
-// const doctorChildren: { [key in DoctorFormFields]: React.ReactNode } = {
-// 	[DoctorFormFields.Dni]: null,
-// 	[DoctorFormFields.FirstName]: null,
-// 	[DoctorFormFields.LastName]: null,
-// 	[DoctorFormFields.BirthDate]: null,
-// 	[DoctorFormFields.Email]: null,
-// 	[DoctorFormFields.Sex]: null,
-// 	[DoctorFormFields.Phone]: null,
-// 	[DoctorFormFields.LocationAddress]: null
-// };
-
-// /**
-//  * Array of authentication field objects.
-//  *
-//  * @type {DoctorFieldObjects[]}
-//  */
-// const doctorFieldObjects: DoctorFieldObjects[] = Object.values(DoctorFormFields).map(
-// 	(fieldName: DoctorFormFields): DoctorFieldObjects => ({
-// 		fieldName,
-// 		label: doctorFieldLabels[fieldName],
-// 		placeholder: doctorPlaceholders[fieldName],
-// 		type: doctorTypes[fieldName]
-// 	})
-// );
+import { cn, showToast } from "@/lib";
+import { format, parse } from "date-fns";
 
 /**
  * Form page for doctor.
@@ -287,30 +198,110 @@ export default function FormDoctor(): React.ReactNode {
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="mt-10 space-y-5">
 							<div className="sm:grid sm:grid-cols-2 sm:gap-5">
-								<FormField control={form.control} name={DoctorFormFields.Dni} render={({ field }): React.ReactElement => <DoctorFormControl<DoctorFormFields> controlState={Boolean(form.formState.errors.dni)} disabled={idParam !== undefined} field={field} label="Cédula" placeholder="Cédula" type="text" />} />
+								<FormField
+									control={form.control}
+									name={DoctorFormFields.Dni}
+									render={({ field }): React.ReactElement => (
+										<FormItem>
+											<FormLabel className="text-lg">Cédula</FormLabel>
 
-								<FormField control={form.control} name={DoctorFormFields.FirstName} render={({ field }): React.ReactElement => <DoctorFormControl<DoctorFormFields> controlState={Boolean(form.formState.errors.firstName)} disabled={idParam !== undefined} field={field} label="Nombre" placeholder="Nombre" type="text" />} />
+											<FormControl>
+												<Input
+													{...field}
+													type="text"
+													placeholder="0000000000"
+													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.dni)
+													})}
+													disabled={idParam !== undefined}
+												/>
+											</FormControl>
 
-								<FormField control={form.control} name={DoctorFormFields.LastName} render={({ field }): React.ReactElement => <DoctorFormControl<DoctorFormFields> controlState={Boolean(form.formState.errors.lastName)} disabled={idParam !== undefined} field={field} label="Apellido" placeholder="Apellido" type="text" />} />
+											<div className="h-5">
+												<FormMessage />
+											</div>
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={form.control}
+									name={DoctorFormFields.FirstName}
+									render={({ field }): React.ReactElement => (
+										<FormItem>
+											<FormLabel className="text-lg">Nombre</FormLabel>
+
+											<FormControl>
+												<Input
+													{...field}
+													type="text"
+													placeholder="Víctor"
+													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.firstName)
+													})}
+													disabled={idParam !== undefined}
+												/>
+											</FormControl>
+
+											<div className="h-5">
+												<FormMessage />
+											</div>
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={form.control}
+									name={DoctorFormFields.LastName}
+									render={({ field }): React.ReactElement => (
+										<FormItem>
+											<FormLabel className="text-lg">Apellido</FormLabel>
+
+											<FormControl>
+												<Input
+													{...field}
+													type="text"
+													placeholder="Varas"
+													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.lastName)
+													})}
+													disabled={idParam !== undefined}
+												/>
+											</FormControl>
+
+											<div className="h-5">
+												<FormMessage />
+											</div>
+										</FormItem>
+									)}
+								/>
 
 								<FormField
 									control={form.control}
 									name={DoctorFormFields.BirthDate}
 									render={({ field }): React.ReactElement => (
-										<DoctorFormControl<DoctorFormFields> controlState={Boolean(form.formState.errors.birthDate)} disabled={idParam !== undefined} field={field} label="Fecha de nacimiento" placeholder="Fecha de nacimiento" type="text">
-											<InputMask
-												mask="99/99/9999"
-												className={cn("flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-base placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:h-12", {
-													"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.lastName)
-												})}
-												onChange={field.onChange}
-												onBlur={field.onBlur}
-												value={field.value}
-												ref={field.ref}
-												name={field.name}
-												disabled={idParam !== undefined}
-											/>
-										</DoctorFormControl>
+										<FormItem>
+											<FormLabel className="text-lg">Fecha de nacimiento</FormLabel>
+
+											<FormControl>
+												<InputMask
+													mask="99/99/9999"
+													className={cn("flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-base placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:h-12", {
+														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.birthDate)
+													})}
+													onChange={field.onChange}
+													onBlur={field.onBlur}
+													value={field.value}
+													ref={field.ref}
+													name={field.name}
+													disabled={idParam !== undefined}
+												/>
+											</FormControl>
+
+											<div className="h-5">
+												<FormMessage />
+											</div>
+										</FormItem>
 									)}
 								/>
 
@@ -318,30 +309,110 @@ export default function FormDoctor(): React.ReactNode {
 									control={form.control}
 									name={DoctorFormFields.Sex}
 									render={({ field }): React.ReactElement => (
-										<DoctorFormControl<DoctorFormFields> controlState={Boolean(form.formState.errors.birthDate)} disabled={idParam !== undefined} field={field} label="Fecha de nacimiento" placeholder="Sexo" type="text">
-											<RadioGroup onValueChange={field.onChange} defaultValue={field.value} value={field.value} className="flex h-10 w-56 justify-between md:h-12">
-												{sex.map(
-													(s: SexData): React.ReactNode => (
-														<RadioGroupLayout key={s.value} sexData={s} disable={idParam !== undefined} />
-													)
-												)}
-											</RadioGroup>
-										</DoctorFormControl>
+										<FormItem>
+											<FormLabel className="text-lg">Sexo</FormLabel>
+
+											<FormControl>
+												<RadioGroup onValueChange={field.onChange} defaultValue={field.value} value={field.value} className="flex h-10 w-56 justify-between md:h-12">
+													{sex.map(
+														(s: SexData): React.ReactNode => (
+															<RadioGroupLayout key={s.value} sexData={s} disable={idParam !== undefined} />
+														)
+													)}
+												</RadioGroup>
+											</FormControl>
+
+											<div className="h-5">
+												<FormMessage />
+											</div>
+										</FormItem>
 									)}
 								/>
 
-								<FormField control={form.control} name={DoctorFormFields.Email} render={({ field }): React.ReactElement => <DoctorFormControl<DoctorFormFields> controlState={Boolean(form.formState.errors.email)} disabled={idParam !== undefined} field={field} label="Correo" placeholder="Correo" type="text" />} />
+								<FormField
+									control={form.control}
+									name={DoctorFormFields.Email}
+									render={({ field }): React.ReactElement => (
+										<FormItem>
+											<FormLabel className="text-lg">Correo</FormLabel>
 
-								<FormField control={form.control} name={DoctorFormFields.Phone} render={({ field }): React.ReactElement => <DoctorFormControl<DoctorFormFields> controlState={Boolean(form.formState.errors.phone)} field={field} label="Celular" placeholder="Celular" type="text" />} />
+											<FormControl>
+												<Input
+													{...field}
+													type="email"
+													placeholder="example@ug.edu.ec"
+													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.email)
+													})}
+													disabled={idParam !== undefined}
+												/>
+											</FormControl>
 
-								<FormField control={form.control} name={DoctorFormFields.LocationAddress} render={({ field }): React.ReactElement => <DoctorFormControl<DoctorFormFields> controlState={Boolean(form.formState.errors.locationAddress)} field={field} label="Dirección" placeholder="Dirección" type="text" />} />
+											<div className="h-5">
+												<FormMessage />
+											</div>
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={form.control}
+									name={DoctorFormFields.Phone}
+									render={({ field }): React.ReactElement => (
+										<FormItem>
+											<FormLabel className="text-lg">Celular</FormLabel>
+
+											<FormControl>
+												<Input
+													{...field}
+													type="phone"
+													placeholder="0000000000"
+													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.phone)
+													})}
+													disabled={idParam !== undefined}
+												/>
+											</FormControl>
+
+											<div className="h-5">
+												<FormMessage />
+											</div>
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={form.control}
+									name={DoctorFormFields.LocationAddress}
+									render={({ field }): React.ReactElement => (
+										<FormItem>
+											<FormLabel className="text-lg">Dirección</FormLabel>
+
+											<FormControl>
+												<Input
+													{...field}
+													type="text"
+													placeholder="Guayaquil, Av. 9 de Octubre"
+													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.locationAddress)
+													})}
+													disabled={idParam !== undefined}
+												/>
+											</FormControl>
+
+											<div className="h-5">
+												<FormMessage />
+											</div>
+										</FormItem>
+									)}
+								/>
 							</div>
 
 							<FormButtons
 								disabled={disabled}
 								resetButtonLabel="Cancelar"
 								resetFunction={form.reset}
-								route="/admin/dashboard"
+								resetRoute="/admin/dashboard"
 								saveButtonLabel="Guardar"
 								waitingButtonLabel={
 									<>

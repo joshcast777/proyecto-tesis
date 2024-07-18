@@ -1,102 +1,113 @@
 import { Button, TooltipLayout } from "@/components/ui";
 import { ToastIcons } from "@/constants/ui";
-import { ToastTitles, ToastTypes } from "@/enums";
+import { DoctorTableFields, DoctorTableHeader, ToastTitles, ToastTypes } from "@/enums";
 import { cn, showToast } from "@/lib";
 import { doctorStore, globalStore } from "@/store";
 import { DoctorTable } from "@/types";
-import { CellContext, ColumnDef } from "@tanstack/react-table";
-import { ArchiveRestore, CircleCheck, CircleX, Pencil, Trash2 } from "lucide-react";
+import { CellContext, ColumnDef, HeaderContext } from "@tanstack/react-table";
+import { ArchiveRestore, ArrowUpDown, CircleCheck, CircleX, Pencil, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
 export const columns: ColumnDef<DoctorTable>[] = [
 	{
-		accessorKey: "id",
-		enableHiding: true
-	},
-	{
-		accessorKey: "index",
-		header: (): React.ReactNode => <div className="text-center">N°</div>,
+		accessorKey: DoctorTableFields.Index,
+		header: (): React.ReactNode => <div className="text-center">{DoctorTableHeader.Index}</div>,
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
-			const index: number = parseInt(row.getValue("index"));
+			const index: number = parseInt(row.getValue(DoctorTableFields.Index));
 
 			return <div className="text-center">{index}</div>;
 		}
 	},
 	{
-		accessorKey: "dni",
-		header: (): React.ReactNode => <div className="text-center">Cédula</div>,
+		id: DoctorTableFields.Id,
+		accessorKey: DoctorTableFields.Id
+	},
+	{
+		accessorKey: DoctorTableFields.Dni,
+		header: (): React.ReactNode => <div className="text-center">{DoctorTableHeader.Dni}</div>,
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
-			const dni: string = row.getValue("dni");
+			const dni: string = row.getValue(DoctorTableFields.Dni);
 
 			return <div className="text-center">{dni}</div>;
 		}
 	},
 	{
-		accessorKey: "firstName",
-		header: (): React.ReactNode => <div className="text-center">Nombres</div>,
+		accessorKey: DoctorTableFields.FullName,
+		header: ({ column }: HeaderContext<DoctorTable, unknown>): React.ReactNode => (
+			<Button
+				variant="ghost"
+				className="w-full text-center font-semibold"
+				onClick={(): void => {
+					column.toggleSorting(column.getIsSorted() === "asc");
+				}}
+			>
+				{DoctorTableHeader.FullName} <ArrowUpDown className="ml-2 h-4 w-4" />
+			</Button>
+		),
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
-			const firstName: string = row.getValue("firstName");
+			const fullName: string = row.getValue(DoctorTableFields.FullName);
 
-			return <div className="text-center">{firstName}</div>;
+			return <div className="text-center">{fullName}</div>;
 		}
 	},
 	{
-		accessorKey: "lastName",
-		header: (): React.ReactNode => <div className="text-center">Apellidos</div>,
+		accessorKey: DoctorTableFields.Phone,
+		header: (): React.ReactNode => <div className="text-center">{DoctorTableHeader.Phone}</div>,
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
-			const lastName: string = row.getValue("lastName");
-
-			return <div className="text-center">{lastName}</div>;
-		}
-	},
-	{
-		accessorKey: "phone",
-		header: (): React.ReactNode => <div className="text-center">Celular</div>,
-		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
-			const phone: string = row.getValue("phone");
+			const phone: string = row.getValue(DoctorTableFields.Phone);
 
 			return <div className="text-center">{phone}</div>;
 		}
 	},
 	{
-		accessorKey: "email",
-		header: (): React.ReactNode => <div className="text-center">Correo</div>,
+		accessorKey: DoctorTableFields.Email,
+		header: (): React.ReactNode => <div className="text-center">{DoctorTableHeader.Email}</div>,
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
-			const email: string = row.getValue("email");
+			const email: string = row.getValue(DoctorTableFields.Email);
 
 			return <div className="text-center">{email}</div>;
 		}
 	},
 	{
-		accessorKey: "status",
-		header: (): React.ReactNode => <div className="text-center">Estado</div>,
+		accessorKey: DoctorTableFields.Status,
+		header: (): React.ReactNode => <div className="text-center">{DoctorTableHeader.Status}</div>,
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
-			const status: boolean = row.getValue("status");
+			const status: boolean = row.getValue(DoctorTableFields.Status);
 
 			return status ? <CircleCheck className="mx-auto text-green-500" /> : <CircleX className="mx-auto text-red-500" />;
 		}
 	},
 	{
-		accessorKey: "updateDate",
-		header: (): React.ReactNode => <div className="text-center">Fecha de creación/actualización</div>,
+		accessorKey: DoctorTableFields.UpdateDate,
+		header: ({ column }: HeaderContext<DoctorTable, unknown>): React.ReactNode => (
+			<Button
+				variant="ghost"
+				className="w-full text-center font-semibold"
+				onClick={(): void => {
+					column.toggleSorting(column.getIsSorted() === "asc");
+				}}
+			>
+				{DoctorTableHeader.UpdateDate} <ArrowUpDown className="ml-2 h-4 w-4" />
+			</Button>
+		),
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
-			const updateDate: string = row.getValue("updateDate");
+			const updateDate: string = row.getValue(DoctorTableFields.UpdateDate);
 
 			return <div className="text-center">{updateDate}</div>;
 		}
 	},
 	{
 		accessorKey: "actions",
-		header: () => <div className="text-center">Acciones</div>,
+		header: () => <div className="text-center">{DoctorTableHeader.Actions}</div>,
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
 			const { deleteDoctor, getDoctors } = doctorStore();
 			const { errorMessage, clearErrorMessage, disableLoading, enableLoading, setErrorMessage } = globalStore();
 
 			const navigate: NavigateFunction = useNavigate();
 
-			const id: number = row.getValue("id");
-			const status: boolean = row.getValue("status");
+			const id: number = row.getValue(DoctorTableFields.Id);
+			const status: boolean = row.getValue(DoctorTableFields.Status);
 
 			const onDeleteDoctor = async (): Promise<void> => {
 				enableLoading();
