@@ -83,15 +83,15 @@ export const columns: ColumnDef<PatientTable>[] = [
 
 			return (
 				<TooltipLayout
-					triggerContent={(): React.ReactNode => (
+					triggerContent={
 						<CircleUserRound
 							className={cn("mx-auto h-4 w-4", {
 								"text-blue-500": sex === Sex.Male,
 								"text-pink-500": sex === Sex.Female
 							})}
 						/>
-					)}
-					content={(): React.ReactNode => <p>{sex === Sex.Male ? "Hombre" : "Mujer"}</p>}
+					}
+					content={<p>{sex === Sex.Male ? "Hombre" : "Mujer"}</p>}
 				/>
 			);
 		}
@@ -126,7 +126,7 @@ export const columns: ColumnDef<PatientTable>[] = [
 			return (
 				<div className="flex items-center justify-center gap-2">
 					<TooltipLayout
-						triggerContent={(): React.ReactNode => (
+						triggerContent={
 							<Button
 								size="icon"
 								className="bg-blue-500 hover:bg-blue-400"
@@ -136,8 +136,8 @@ export const columns: ColumnDef<PatientTable>[] = [
 							>
 								<Eye className="h-4 w-4" />
 							</Button>
-						)}
-						content={(): React.ReactNode => <p>Ver paciente</p>}
+						}
+						content={<p>Ver paciente</p>}
 					/>
 				</div>
 			);

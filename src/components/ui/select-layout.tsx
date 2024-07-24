@@ -2,16 +2,17 @@ import { SelectValues } from "@/types";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./select";
 
 type SelectLayoutProps = {
+	className?: string;
 	defaultValue: string;
 	placeholder: string;
 	values: SelectValues[][];
 	onValueChange: (event: string) => void;
 };
 
-export default function SelectLayout({ defaultValue, placeholder, values, onValueChange }: SelectLayoutProps): React.ReactNode {
+export default function SelectLayout({ className, defaultValue, placeholder, values, onValueChange }: SelectLayoutProps): React.ReactNode {
 	return (
 		<Select defaultValue={defaultValue} onValueChange={onValueChange}>
-			<SelectTrigger className="w-[200px]">
+			<SelectTrigger className={className !== undefined ? className : ""}>
 				<SelectValue placeholder={placeholder} />
 			</SelectTrigger>
 

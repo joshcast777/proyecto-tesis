@@ -73,10 +73,12 @@ export default function AdminDashboard(): React.ReactNode {
 		};
 	}, []);
 
+	if (isLoading) {
+		return <Loader />;
+	}
+
 	return (
 		<>
-			{isLoading && <Loader />}
-
 			<Header />
 
 			<h2 className="container mt-16 text-center text-5xl">Lista de doctores</h2>

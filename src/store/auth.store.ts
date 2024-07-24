@@ -24,18 +24,18 @@ import { devtools } from "zustand/middleware";
 export const authStore = create<AuthStore>()(
 	devtools((set) => ({
 		isAuthenticated: Boolean(localStorage.getItem(LocalStorageKeys.Id)) && Boolean(localStorage.getItem(LocalStorageKeys.Role)),
-		currentDoctor: DefaultValues.Doctor,
+		currentUser: DefaultValues.Doctor,
 		clearIsAuthenticated: (): void => {
 			set(
 				{
 					isAuthenticated: false,
-					currentDoctor: DefaultValues.Doctor
+					currentUser: DefaultValues.Doctor
 				},
 				false,
 				"CLEAR_ERROR_MESSAGE"
 			);
 		},
-		getCurrentDoctor: async (id: string): Promise<string> => {
+		getCurrentUser: async (id: string): Promise<string> => {
 			const apiResponse: ApiResponse<Doctor> = await firebaseGetDoctor(id);
 
 			if (!apiResponse.success) {
@@ -44,7 +44,7 @@ export const authStore = create<AuthStore>()(
 
 				set(
 					{
-						currentDoctor: DefaultValues.Doctor,
+						currentUser: DefaultValues.Doctor,
 						isAuthenticated: false
 					},
 					false,
@@ -61,7 +61,7 @@ export const authStore = create<AuthStore>()(
 
 			set(
 				{
-					currentDoctor: {
+					currentUser: {
 						id,
 						data
 					},
@@ -77,13 +77,13 @@ export const authStore = create<AuthStore>()(
 			set(
 				{
 					isAuthenticated: true,
-					currentDoctor: doctor
+					currentUser: doctor
 				},
 				false,
 				"SET_AUTHENTICATED_USER"
 			);
 		},
-		signInDoctor: async (authData: AuthForm): Promise<string> => {
+		signInUser: async (authData: AuthForm): Promise<string> => {
 			const apiResponse: ApiResponse<string> = await firebaseSignInDoctor(authData);
 
 			if (!apiResponse.success) {
@@ -96,7 +96,7 @@ export const authStore = create<AuthStore>()(
 
 			return apiResponse.data!;
 		},
-		signOutDoctor: async (): Promise<string> => {
+		signOutUser: async (): Promise<string> => {
 			const apiResponse: ApiResponse<null> = await firebaseSignOutDoctor();
 
 			if (!apiResponse.success) {
@@ -105,7 +105,7 @@ export const authStore = create<AuthStore>()(
 
 			return "";
 		},
-		signUpDoctor: async ({ email, password }: AuthForm): Promise<string> => {
+		signUpUser: async ({ email, password }: AuthForm): Promise<string> => {
 			const apiResponse: ApiResponse<string> = await firebaseSignUpDoctor({
 				email,
 				password

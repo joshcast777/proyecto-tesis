@@ -31,6 +31,8 @@ import { sex } from "@/data";
 import { cn, showToast } from "@/lib";
 import { format, parse } from "date-fns";
 
+const { VITE_ADMIN_EMAIL } = import.meta.env;
+
 /**
  * Form page for doctor.
  *
@@ -40,7 +42,7 @@ import { format, parse } from "date-fns";
 export default function FormDoctor(): React.ReactNode {
 	const [disabled, setDisabled] = useState<boolean>(false);
 
-	const { signInDoctor, signOutDoctor, signUpDoctor } = authStore();
+	const { signInUser, signOutUser, signUpUser } = authStore();
 	const {
 		doctor: { data },
 		getDoctor,
@@ -60,7 +62,7 @@ export default function FormDoctor(): React.ReactNode {
 	let newId: string = "";
 
 	const registerDoctor = async (email: string): Promise<boolean> => {
-		const response: string = await signUpDoctor({
+		const response: string = await signUpUser({
 			email: email,
 			password: email.split("@")[0]
 		});
@@ -74,13 +76,11 @@ export default function FormDoctor(): React.ReactNode {
 			return false;
 		}
 
-		await signOutDoctor();
+		await signOutUser();
 
 		clearLocalStorage();
 
-		const { VITE_ADMIN_EMAIL } = import.meta.env;
-
-		await signInDoctor({
+		await signInUser({
 			email: VITE_ADMIN_EMAIL,
 			password: VITE_ADMIN_EMAIL.split("@")[0]
 		});
@@ -187,243 +187,243 @@ export default function FormDoctor(): React.ReactNode {
 		}
 	}, [errorMessage]);
 
+	if (isLoading) {
+		return <Loader />;
+	}
+
 	return (
-		<>
-			{isLoading && <Loader />}
+		<div className="flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url('/src/assets/images/background-doctor.webp')] bg-cover bg-center bg-no-repeat p-8">
+			<div className="container rounded bg-blue-100/75 p-5 text-gray-900 lg:max-w-[1024px]">
+				<FormTitle>{idParam === undefined ? "Ingreso de doctor" : "Editar doctor"}</FormTitle>
 
-			<div className="flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url('/src/assets/images/background-doctor.webp')] bg-cover bg-center bg-no-repeat p-8">
-				<div className="container rounded bg-blue-100/75 p-5 text-gray-900 lg:max-w-[1024px]">
-					<FormTitle>{idParam === undefined ? "Ingreso de doctor" : "Editar doctor"}</FormTitle>
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="mt-10 space-y-5">
+						<div className="sm:grid sm:grid-cols-2 sm:gap-5">
+							<FormField
+								control={form.control}
+								name={DoctorFormFields.Dni}
+								render={({ field }): React.ReactElement => (
+									<FormItem>
+										<FormLabel className="text-lg">Cédula</FormLabel>
 
-					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="mt-10 space-y-5">
-							<div className="sm:grid sm:grid-cols-2 sm:gap-5">
-								<FormField
-									control={form.control}
-									name={DoctorFormFields.Dni}
-									render={({ field }): React.ReactElement => (
-										<FormItem>
-											<FormLabel className="text-lg">Cédula</FormLabel>
+										<FormControl>
+											<Input
+												{...field}
+												type="text"
+												placeholder="0000000000"
+												className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+													"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.dni)
+												})}
+												disabled={idParam !== undefined}
+											/>
+										</FormControl>
 
-											<FormControl>
-												<Input
-													{...field}
-													type="text"
-													placeholder="0000000000"
-													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
-														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.dni)
-													})}
-													disabled={idParam !== undefined}
-												/>
-											</FormControl>
-
-											<div className="h-5">
-												<FormMessage />
-											</div>
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name={DoctorFormFields.FirstName}
-									render={({ field }): React.ReactElement => (
-										<FormItem>
-											<FormLabel className="text-lg">Nombre</FormLabel>
-
-											<FormControl>
-												<Input
-													{...field}
-													type="text"
-													placeholder="Víctor"
-													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
-														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.firstName)
-													})}
-													disabled={idParam !== undefined}
-												/>
-											</FormControl>
-
-											<div className="h-5">
-												<FormMessage />
-											</div>
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name={DoctorFormFields.LastName}
-									render={({ field }): React.ReactElement => (
-										<FormItem>
-											<FormLabel className="text-lg">Apellido</FormLabel>
-
-											<FormControl>
-												<Input
-													{...field}
-													type="text"
-													placeholder="Varas"
-													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
-														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.lastName)
-													})}
-													disabled={idParam !== undefined}
-												/>
-											</FormControl>
-
-											<div className="h-5">
-												<FormMessage />
-											</div>
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name={DoctorFormFields.BirthDate}
-									render={({ field }): React.ReactElement => (
-										<FormItem>
-											<FormLabel className="text-lg">Fecha de nacimiento</FormLabel>
-
-											<FormControl>
-												<InputMask
-													mask="99/99/9999"
-													className={cn("flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-base placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:h-12", {
-														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.birthDate)
-													})}
-													onChange={field.onChange}
-													onBlur={field.onBlur}
-													value={field.value}
-													ref={field.ref}
-													name={field.name}
-													disabled={idParam !== undefined}
-												/>
-											</FormControl>
-
-											<div className="h-5">
-												<FormMessage />
-											</div>
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name={DoctorFormFields.Sex}
-									render={({ field }): React.ReactElement => (
-										<FormItem>
-											<FormLabel className="text-lg">Sexo</FormLabel>
-
-											<FormControl>
-												<RadioGroup onValueChange={field.onChange} defaultValue={field.value} value={field.value} className="flex h-10 w-56 justify-between md:h-12">
-													{sex.map(
-														(s: SexData): React.ReactNode => (
-															<RadioGroupLayout key={s.value} sexData={s} disable={idParam !== undefined} />
-														)
-													)}
-												</RadioGroup>
-											</FormControl>
-
-											<div className="h-5">
-												<FormMessage />
-											</div>
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name={DoctorFormFields.Email}
-									render={({ field }): React.ReactElement => (
-										<FormItem>
-											<FormLabel className="text-lg">Correo</FormLabel>
-
-											<FormControl>
-												<Input
-													{...field}
-													type="email"
-													placeholder="example@ug.edu.ec"
-													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
-														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.email)
-													})}
-													disabled={idParam !== undefined}
-												/>
-											</FormControl>
-
-											<div className="h-5">
-												<FormMessage />
-											</div>
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name={DoctorFormFields.Phone}
-									render={({ field }): React.ReactElement => (
-										<FormItem>
-											<FormLabel className="text-lg">Celular</FormLabel>
-
-											<FormControl>
-												<Input
-													{...field}
-													type="phone"
-													placeholder="0000000000"
-													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
-														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.phone)
-													})}
-													disabled={idParam !== undefined}
-												/>
-											</FormControl>
-
-											<div className="h-5">
-												<FormMessage />
-											</div>
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name={DoctorFormFields.LocationAddress}
-									render={({ field }): React.ReactElement => (
-										<FormItem>
-											<FormLabel className="text-lg">Dirección</FormLabel>
-
-											<FormControl>
-												<Input
-													{...field}
-													type="text"
-													placeholder="Guayaquil, Av. 9 de Octubre"
-													className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
-														"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.locationAddress)
-													})}
-													disabled={idParam !== undefined}
-												/>
-											</FormControl>
-
-											<div className="h-5">
-												<FormMessage />
-											</div>
-										</FormItem>
-									)}
-								/>
-							</div>
-
-							<FormButtons
-								disabled={disabled}
-								resetButtonLabel="Cancelar"
-								resetFunction={form.reset}
-								resetRoute="/admin/dashboard"
-								saveButtonLabel="Guardar"
-								waitingButtonLabel={
-									<>
-										<Loader2 className="mr-2 h-4 w-4 animate-spin" /> Por favor, espere...
-									</>
-								}
+										<div className="h-5">
+											<FormMessage />
+										</div>
+									</FormItem>
+								)}
 							/>
-						</form>
-					</Form>
-				</div>
+
+							<FormField
+								control={form.control}
+								name={DoctorFormFields.FirstName}
+								render={({ field }): React.ReactElement => (
+									<FormItem>
+										<FormLabel className="text-lg">Nombre</FormLabel>
+
+										<FormControl>
+											<Input
+												{...field}
+												type="text"
+												placeholder="Víctor"
+												className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+													"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.firstName)
+												})}
+												disabled={idParam !== undefined}
+											/>
+										</FormControl>
+
+										<div className="h-5">
+											<FormMessage />
+										</div>
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name={DoctorFormFields.LastName}
+								render={({ field }): React.ReactElement => (
+									<FormItem>
+										<FormLabel className="text-lg">Apellido</FormLabel>
+
+										<FormControl>
+											<Input
+												{...field}
+												type="text"
+												placeholder="Varas"
+												className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+													"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.lastName)
+												})}
+												disabled={idParam !== undefined}
+											/>
+										</FormControl>
+
+										<div className="h-5">
+											<FormMessage />
+										</div>
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name={DoctorFormFields.BirthDate}
+								render={({ field }): React.ReactElement => (
+									<FormItem>
+										<FormLabel className="text-lg">Fecha de nacimiento</FormLabel>
+
+										<FormControl>
+											<InputMask
+												mask="99/99/9999"
+												className={cn("flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-base placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:h-12", {
+													"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.birthDate)
+												})}
+												onChange={field.onChange}
+												onBlur={field.onBlur}
+												value={field.value}
+												ref={field.ref}
+												name={field.name}
+												disabled={idParam !== undefined}
+											/>
+										</FormControl>
+
+										<div className="h-5">
+											<FormMessage />
+										</div>
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name={DoctorFormFields.Sex}
+								render={({ field }): React.ReactElement => (
+									<FormItem>
+										<FormLabel className="text-lg">Sexo</FormLabel>
+
+										<FormControl>
+											<RadioGroup onValueChange={field.onChange} defaultValue={field.value} value={field.value} className="flex h-10 w-56 justify-between md:h-12">
+												{sex.map(
+													(s: SexData): React.ReactNode => (
+														<RadioGroupLayout key={s.value} sexData={s} disable={idParam !== undefined} />
+													)
+												)}
+											</RadioGroup>
+										</FormControl>
+
+										<div className="h-5">
+											<FormMessage />
+										</div>
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name={DoctorFormFields.Email}
+								render={({ field }): React.ReactElement => (
+									<FormItem>
+										<FormLabel className="text-lg">Correo</FormLabel>
+
+										<FormControl>
+											<Input
+												{...field}
+												type="email"
+												placeholder="example@ug.edu.ec"
+												className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+													"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.email)
+												})}
+												disabled={idParam !== undefined}
+											/>
+										</FormControl>
+
+										<div className="h-5">
+											<FormMessage />
+										</div>
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name={DoctorFormFields.Phone}
+								render={({ field }): React.ReactElement => (
+									<FormItem>
+										<FormLabel className="text-lg">Celular</FormLabel>
+
+										<FormControl>
+											<Input
+												{...field}
+												type="phone"
+												placeholder="0000000000"
+												className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+													"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.phone)
+												})}
+												disabled={idParam !== undefined}
+											/>
+										</FormControl>
+
+										<div className="h-5">
+											<FormMessage />
+										</div>
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name={DoctorFormFields.LocationAddress}
+								render={({ field }): React.ReactElement => (
+									<FormItem>
+										<FormLabel className="text-lg">Dirección</FormLabel>
+
+										<FormControl>
+											<Input
+												{...field}
+												type="text"
+												placeholder="Guayaquil, Av. 9 de Octubre"
+												className={cn("text-base placeholder:text-base disabled:text-gray-900 disabled:opacity-75 md:h-12", {
+													"shake-animation border-red-500 outline-red-500": Boolean(form.formState.errors.locationAddress)
+												})}
+												disabled={idParam !== undefined}
+											/>
+										</FormControl>
+
+										<div className="h-5">
+											<FormMessage />
+										</div>
+									</FormItem>
+								)}
+							/>
+						</div>
+
+						<FormButtons
+							disabled={disabled}
+							resetButtonLabel="Cancelar"
+							resetFunction={form.reset}
+							resetRoute="/admin/dashboard"
+							saveButtonLabel="Guardar"
+							waitingButtonLabel={
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" /> Por favor, espere...
+								</>
+							}
+						/>
+					</form>
+				</Form>
 			</div>
-		</>
+		</div>
 	);
 }

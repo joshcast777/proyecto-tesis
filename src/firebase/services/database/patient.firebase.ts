@@ -177,15 +177,12 @@ export async function firebaseSaveAppointment(newAppointment: AppointmentData, p
 	}
 }
 
-export async function firebaseSavePatient(newPatient: PatientData): Promise<ApiResponse<Patient>> {
+export async function firebaseSavePatient(newPatient: Patient): Promise<ApiResponse<Patient>> {
 	try {
-		const patientRef: DocumentReference = await addDoc(collection(database, Collections.Patients), newPatient);
+		await setDoc(doc(database, Collections.Patients, newPatient.id), newPatient.data);
 
 		return successApiResponse<Patient>({
-			data: {
-				id: patientRef.id,
-				data: newPatient
-			}
+			data: structuredClone(newPatient)
 		});
 	} catch (error: any) {
 		console.error(error);

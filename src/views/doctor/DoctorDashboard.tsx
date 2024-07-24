@@ -54,10 +54,12 @@ export default function DoctorDashboard(): React.ReactNode {
 		};
 	}, []);
 
+	if (isLoading) {
+		return <Loader />;
+	}
+
 	return (
 		<>
-			{isLoading && <Loader />}
-
 			<Header />
 
 			<h2 className="container mt-16 text-center text-5xl">Lista de pacientes</h2>
@@ -78,12 +80,13 @@ export default function DoctorDashboard(): React.ReactNode {
 						})
 					)}
 					filterComponent={(table: Table<PatientTable>) => (
-						<div className="flex items-center gap-5 py-4">
-							<Input placeholder="Filtrar cédula..." value={table.getColumn("dni")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("dni")?.setFilterValue(event.target.value)} className="max-w-40" />
+						<div className="flex flex-col gap-5 py-4 md:flex-row xl:items-center">
+							<Input placeholder="Filtrar cédula..." value={table.getColumn("dni")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("dni")?.setFilterValue(event.target.value)} className="w-full lg:w-44" />
 
-							<Input placeholder="Filtrar nombres..." value={table.getColumn("fullName")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("fullName")?.setFilterValue(event.target.value)} className="max-w-sm" />
+							<Input placeholder="Filtrar nombres..." value={table.getColumn("fullName")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("fullName")?.setFilterValue(event.target.value)} className="w-full lg:w-80" />
 
 							<SelectLayout
+								className="w-full lg:w-52"
 								placeholder="Seleccione sexo..."
 								values={selectValues}
 								defaultValue={table.getColumn("sex")?.getFilterValue() as string}

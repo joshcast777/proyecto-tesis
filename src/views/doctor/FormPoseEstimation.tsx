@@ -1,11 +1,15 @@
 import { ImageButtons, ImageUpload } from "@/components/doctor";
-import { FormButtons, FormTitle, Loader, Separator, Textarea } from "@/components/ui";
+import PatientPdf from "@/components/doctor/patient-pdf";
+import { Button, FormButtons, FormTitle, Loader, Separator, Textarea } from "@/components/ui";
 import { ToastIcons } from "@/constants/ui";
 import { LocalStorageKeys, ToastTitles, ToastTypes } from "@/enums";
 import { cn, showToast } from "@/lib";
 import { authStore, globalStore, patientStore } from "@/store";
 import { AppointmentData, ImagesBlob, ImagesDownloadLink, Patient } from "@/types";
-import { useEffect, useState } from "react";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { format } from "date-fns";
+import { FileText } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
 const { VITE_POSE_ESTIMATION_API } = import.meta.env;
@@ -34,14 +38,17 @@ function createPoseEstimationValue(overrides: Partial<PoseEstimationValue>): Pos
 }
 
 export default function FormPoseEstimation(): React.ReactNode {
+	const [saved, setSaved] = useState<boolean>(false);
 	const [buttonsDisabled, setButtonsDisabled] = useState<boolean>(false);
 	const [poseEstimationValue, setPoseEstimationValue] = useState<PoseEstimationValue>(defaultPoseEstimationValue);
 
+	const buttonRef = useRef<HTMLButtonElement>(null);
+
 	const {
-		currentDoctor: { data }
+		currentUser: { data }
 	} = authStore();
 	const { errorMessage, isLoading, clearErrorMessage, disableLoading, enableLoading, setErrorMessage } = globalStore();
-	const { currentPatient, clearCurrentPatient, clearCurrentAppointment, saveAppointment, editPatient, uploadImages } = patientStore();
+	const { currentAppointment, currentPatient, clearCurrentPatient, clearCurrentAppointment, saveAppointment, editPatient, uploadImages } = patientStore();
 
 	const navigate: NavigateFunction = useNavigate();
 
@@ -80,7 +87,7 @@ export default function FormPoseEstimation(): React.ReactNode {
 		await estimatePoseRequest(formData);
 	};
 
-	const uploadImagesToFirebase = async (): Promise<ImagesDownloadLink[]> => {
+	const uploadImagesToCloud = async (): Promise<ImagesDownloadLink[]> => {
 		const responses: Response[] = await Promise.all([fetch(poseEstimationValue.uploadedImage), fetch(poseEstimationValue.estimatedImage)]);
 
 		const images: ImagesBlob[] = await Promise.all(
@@ -156,13 +163,15 @@ export default function FormPoseEstimation(): React.ReactNode {
 		enableLoading();
 		setButtonsDisabled(true);
 
-		const downloadLinks: ImagesDownloadLink[] = await uploadImagesToFirebase();
+		const downloadLinks: ImagesDownloadLink[] = await uploadImagesToCloud();
 
 		const successAppointmentSaved: boolean = await saveAppointmentData(downloadLinks);
 
 		if (!successAppointmentSaved) {
 			return;
 		}
+
+		buttonRef.current?.click();
 
 		const successPatientUpdated: boolean = await updatePatientData();
 
@@ -171,17 +180,13 @@ export default function FormPoseEstimation(): React.ReactNode {
 		}
 
 		disableLoading();
+		setSaved(true);
 
 		showToast({
 			type: ToastTypes.Success,
 			title: ToastTitles.Success,
-			message: "Datos guardados, será redireccionado",
-			icon: ToastIcons.Success,
-			onDismissAndOnAutoCloseFunctions: (): void => {
-				navigate("/doctor/dashboard", {
-					replace: true
-				});
-			}
+			message: "Datos guardados",
+			icon: ToastIcons.Success
 		});
 	};
 
@@ -202,72 +207,92 @@ export default function FormPoseEstimation(): React.ReactNode {
 		};
 	}, [errorMessage]);
 
+	if (isLoading) {
+		return <Loader />;
+	}
+
 	return (
-		<>
-			{isLoading && <Loader />}
+		<div className="flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url('/src/assets/images/background-patient.webp')] bg-cover bg-center bg-no-repeat p-8">
+			<div className="container rounded bg-blue-300/75 p-5 text-gray-900 lg:max-w-[1024px]">
+				<FormTitle>Estimación de pose</FormTitle>
 
-			<div className="flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url('/src/assets/images/background-patient.webp')] bg-cover bg-center bg-no-repeat p-8">
-				<div className="container rounded bg-blue-300/75 p-5 text-gray-900 lg:max-w-[1024px]">
-					<FormTitle>Estimación de pose</FormTitle>
+				<div className="mt-10 space-y-10 md:flex md:space-x-5 md:space-y-0">
+					<div className="md:w-1/2">
+						<ImageUpload uploadedImageSrc={poseEstimationValue.uploadedImage} />
 
-					<div className="mt-10 space-y-10 md:flex md:space-x-5 md:space-y-0">
-						<div className="md:w-1/2">
-							<ImageUpload uploadedImageSrc={poseEstimationValue.uploadedImage} />
-
-							<ImageButtons
-								disabledRemoveButton={poseEstimationValue.uploadedImage.includes("no-image")}
-								disabledSendButton={poseEstimationValue.uploadedImage.includes("no-image")}
-								uploadImage={(uploadedImageSrc: string): void => {
-									setPoseEstimationValue(
-										(poseEstimation: PoseEstimationValue): PoseEstimationValue =>
-											createPoseEstimationValue({
-												...poseEstimation,
-												uploadedImage: uploadedImageSrc
-											})
-									);
-								}}
-								sendButtonFunction={handleEstimatePose}
-								removeImageFunction={(): void => {
-									setPoseEstimationValue(
-										(poseEstimation: PoseEstimationValue): PoseEstimationValue =>
-											createPoseEstimationValue({
-												...poseEstimation,
-												uploadedImage: "/src/assets/images/no-image.png"
-											})
-									);
-								}}
-							/>
-						</div>
-
-						<Separator className="md:hidden" />
-
-						<div className="flex aspect-[9/14] w-full items-center justify-center rounded border border-gray-500 md:w-1/2">
-							<img
-								className={cn("cover h-full w-full rounded", {
-									"object-cover": poseEstimationValue.estimatedImage.includes("assets"),
-									"object-contain": !poseEstimationValue.estimatedImage.includes("assets")
-								})}
-								src={poseEstimationValue.estimatedImage}
-								alt="Pose estimated"
-							/>
-						</div>
-					</div>
-
-					<div className="mt-10">
-						<Textarea
-							onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+						<ImageButtons
+							disabledRemoveButton={poseEstimationValue.uploadedImage.includes("no-image")}
+							disabledSendButton={poseEstimationValue.uploadedImage.includes("no-image")}
+							uploadImage={(uploadedImageSrc: string): void => {
 								setPoseEstimationValue(
 									(poseEstimation: PoseEstimationValue): PoseEstimationValue =>
 										createPoseEstimationValue({
 											...poseEstimation,
-											summary: event.target.value
+											uploadedImage: uploadedImageSrc
 										})
 								);
 							}}
-							className="h-[300px] text-base file:text-sm file:font-medium"
-							value={poseEstimationValue.summary}
+							sendButtonFunction={handleEstimatePose}
+							removeImageFunction={(): void => {
+								setPoseEstimationValue(
+									(poseEstimation: PoseEstimationValue): PoseEstimationValue =>
+										createPoseEstimationValue({
+											...poseEstimation,
+											uploadedImage: "/src/assets/images/no-image.png"
+										})
+								);
+							}}
 						/>
 					</div>
+
+					<Separator className="md:hidden" />
+
+					<div className="flex aspect-[9/14] w-full items-center justify-center rounded border border-gray-500 md:w-1/2">
+						<img
+							className={cn("cover h-full w-full rounded", {
+								"object-cover": poseEstimationValue.estimatedImage.includes("assets"),
+								"object-contain": !poseEstimationValue.estimatedImage.includes("assets")
+							})}
+							src={poseEstimationValue.estimatedImage}
+							alt="Pose estimated"
+						/>
+					</div>
+				</div>
+
+				<div className="mt-10">
+					<Textarea
+						onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+							setPoseEstimationValue(
+								(poseEstimation: PoseEstimationValue): PoseEstimationValue =>
+									createPoseEstimationValue({
+										...poseEstimation,
+										summary: event.target.value
+									})
+							);
+						}}
+						className="h-[300px] text-base file:text-sm file:font-medium"
+						value={poseEstimationValue.summary}
+					/>
+				</div>
+
+				<div className="sm:flex sm:items-center sm:justify-between">
+					<PDFDownloadLink document={<PatientPdf patientData={currentPatient.data} appointmentData={currentAppointment.data} />} fileName={`paciente-${format(new Date(), "dd-MM-yyyy")}`} className="my-10 flex justify-end">
+						<Button
+							className={cn("mt-5 w-full bg-purple-700 hover:bg-purple-800 sm:w-auto lg:text-lg", {
+								flex: saved,
+								hidden: !saved
+							})}
+							onClick={(): void => {
+								setTimeout(() => {
+									navigate("/doctor/dashboard", {
+										replace: true
+									});
+								}, 3000);
+							}}
+						>
+							<FileText className="mr-3" /> Imprimir cita
+						</Button>
+					</PDFDownloadLink>
 
 					<FormButtons
 						disabled={buttonsDisabled}
@@ -285,6 +310,6 @@ export default function FormPoseEstimation(): React.ReactNode {
 					/>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 }

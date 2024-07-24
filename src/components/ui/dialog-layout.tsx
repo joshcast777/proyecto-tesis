@@ -3,22 +3,22 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 type DialogLayoutProps = {
 	description?: string;
 	title?: string;
-	dialogCloseContent?: () => React.ReactNode;
-	content: () => React.ReactNode;
-	footerContent?: () => React.ReactNode;
-	headerContent?: () => React.ReactNode;
-	triggerContent: () => React.ReactNode;
+	dialogCloseContent?: React.ReactNode;
+	content: React.ReactNode;
+	footerContent?: React.ReactNode;
+	headerContent?: React.ReactNode;
+	triggerContent: React.ReactNode;
 };
 
 export default function DialogLayout({ title, description, dialogCloseContent, content, footerContent, headerContent, triggerContent }: DialogLayoutProps): React.ReactNode {
 	return (
 		<Dialog>
-			<DialogTrigger asChild>{triggerContent()}</DialogTrigger>
+			<DialogTrigger asChild>{triggerContent}</DialogTrigger>
 
 			<DialogContent>
 				<DialogHeader>
 					{headerContent !== undefined ? (
-						headerContent()
+						headerContent
 					) : (
 						<>
 							<DialogTitle>{title}</DialogTitle>
@@ -28,12 +28,12 @@ export default function DialogLayout({ title, description, dialogCloseContent, c
 					)}
 				</DialogHeader>
 
-				{content()}
+				{content}
 
 				<DialogFooter className="sm:justify-start">
-					{footerContent !== undefined && footerContent()}
+					{footerContent !== undefined && footerContent}
 
-					{dialogCloseContent !== undefined && <DialogClose asChild>{dialogCloseContent()}</DialogClose>}
+					{dialogCloseContent !== undefined && <DialogClose asChild>{dialogCloseContent}</DialogClose>}
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>

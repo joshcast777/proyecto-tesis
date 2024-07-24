@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 // Firebase
-import { app } from "../../firebase";
 import { Auth, User, UserCredential, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { app } from "../../firebase";
 
 // Utils
 import { errorApiResponse, successApiResponse } from "@/lib";

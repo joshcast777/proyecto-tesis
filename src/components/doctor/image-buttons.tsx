@@ -60,7 +60,7 @@ export default function ImageButtons({ disabledRemoveButton = false, disabledSen
 			</Button>
 
 			<DialogLayout
-				content={(): React.ReactNode => (
+				content={
 					<div>
 						<Camera
 							ref={cameraRef}
@@ -73,13 +73,13 @@ export default function ImageButtons({ disabledRemoveButton = false, disabledSen
 							}}
 						/>
 					</div>
-				)}
-				triggerContent={(): React.ReactNode => (
+				}
+				triggerContent={
 					<Button className="h-16 w-full shrink bg-blue-700 hover:bg-blue-800">
 						<Aperture />
 					</Button>
-				)}
-				dialogCloseContent={(): React.ReactNode => (
+				}
+				dialogCloseContent={
 					<Button
 						className="w-full gap-3"
 						onClick={async (): Promise<void> => {
@@ -88,7 +88,7 @@ export default function ImageButtons({ disabledRemoveButton = false, disabledSen
 					>
 						<Aperture /> Tomar foto
 					</Button>
-				)}
+				}
 			/>
 
 			<Button className="h-16 w-full shrink bg-green-800 hover:bg-green-900" onClick={handleSendImage} disabled={disabledSendButton}>

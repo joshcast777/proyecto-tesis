@@ -6,13 +6,13 @@ import { AuthForm, Doctor } from "@/types";
  *
  * @export
  * @property {boolean} isAuthenticated - Indicates whether a doctor is authenticated.
- * @property {Doctor} currentDoctor - The currently authenticated doctor.
- * @property {function(string): Promise<string>} getCurrentDoctor - Retrieves the current doctor's information based on their UID.
+ * @property {Doctor} currentUser - The currently authenticated user.
+ * @property {function(string): Promise<string>} getCurrentUser - Retrieves the current user's information based on their UID.
  * @property {function(): void} clearIsAuthenticated - Clears the authentication status.
- * @property {function(Doctor): void} setIsAuthenticated - Sets the authentication status and the current doctor.
- * @property {function(AuthForm): Promise<string>} signInDoctor - Signs in a doctor with the provided authentication data.
- * @property {function(): Promise<string>} signOutDoctor - Signs out the currently authenticated doctor.
- * @property {function(AuthForm): Promise<string>} signUpDoctor - Signs up a new doctor with the provided authentication data.
+ * @property {function(Doctor): void} setIsAuthenticated - Sets the authentication status and the current user.
+ * @property {function(AuthForm): Promise<string>} signInUser - Signs in a user with the provided authentication data.
+ * @property {function(): Promise<string>} signOutUser - Signs out the currently authenticated user.
+ * @property {function(AuthForm): Promise<string>} signUpUser - Signs up a new user with the provided authentication data.
  */
 export type AuthStore = {
 	/**
@@ -27,7 +27,7 @@ export type AuthStore = {
 	 *
 	 * @type {Doctor}
 	 */
-	currentDoctor: Doctor;
+	currentUser: Doctor;
 
 	/**
 	 * Retrieves the current doctor's information based on their UID.
@@ -35,7 +35,7 @@ export type AuthStore = {
 	 * @param {string} uid - The UID of the doctor.
 	 * @returns {Promise<string>} A promise that resolves with a response string.
 	 */
-	getCurrentDoctor: (uid: string) => Promise<string>;
+	getCurrentUser: (uid: string) => Promise<string>;
 
 	/**
 	 * Clears the authentication status.
@@ -55,14 +55,14 @@ export type AuthStore = {
 	 * @param {AuthForm} authData - The authentication data containing the email and password.
 	 * @returns {Promise<string>} A promise that resolves with a response string.
 	 */
-	signInDoctor: (authData: AuthForm) => Promise<string>;
+	signInUser: (authData: AuthForm) => Promise<string>;
 
 	/**
 	 * Signs out the currently authenticated doctor.
 	 *
 	 * @returns {Promise<string>} A promise that resolves with a response string.
 	 */
-	signOutDoctor: () => Promise<string>;
+	signOutUser: () => Promise<string>;
 
 	/**
 	 * Signs up a new doctor with the provided authentication data.
@@ -70,5 +70,5 @@ export type AuthStore = {
 	 * @param {AuthForm} authData - The authentication data containing the email and password.
 	 * @returns {Promise<string>} A promise that resolves with a response string.
 	 */
-	signUpDoctor: ({ email, password }: AuthForm) => Promise<string>;
+	signUpUser: ({ email, password }: AuthForm) => Promise<string>;
 };

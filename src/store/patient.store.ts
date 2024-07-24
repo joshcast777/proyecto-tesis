@@ -1,7 +1,7 @@
+import { cloudinaryUploadImages } from "@/cloudinary";
 import { DefaultValues, ErrorMessages } from "@/constants";
 import { firebaseEditPatient, firebaseGetAppointment, firebaseGetPatient, firebaseGetPatients, firebaseSaveAppointment, firebaseSavePatient } from "@/firebase/services/database";
-import { firebaseUploadImages } from "@/firebase/services/storage";
-import { ApiResponse, Appointment, AppointmentData, ImagesBlob, ImagesDownloadLink, Patient, PatientData, PatientReferences } from "@/types";
+import { ApiResponse, Appointment, AppointmentData, ImagesBlob, ImagesDownloadLink, Patient, PatientReferences } from "@/types";
 import { PatientStore } from "@/types/store";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
@@ -134,7 +134,7 @@ export const patientStore = create<PatientStore>()(
 
 			return "";
 		},
-		savePatient: async (newPatient: PatientData): Promise<string> => {
+		savePatient: async (newPatient: Patient): Promise<string> => {
 			const apiResponse: ApiResponse<Patient> = await firebaseSavePatient(newPatient);
 
 			if (!apiResponse.success) {
@@ -172,7 +172,7 @@ export const patientStore = create<PatientStore>()(
 		uploadImages: async (images: ImagesBlob[]): Promise<ImagesDownloadLink[]> => {
 			const { currentPatient } = get();
 
-			const apiResponse: ApiResponse<ImagesDownloadLink[]> = await firebaseUploadImages(images, currentPatient.id);
+			const apiResponse: ApiResponse<ImagesDownloadLink[]> = await cloudinaryUploadImages(images, currentPatient.id);
 
 			return apiResponse.data!;
 		}

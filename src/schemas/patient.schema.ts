@@ -35,6 +35,11 @@ export const patientSchema = z
 			.string({
 				required_error: ErrorFields.Required
 			})
-			.regex(/^\d{10}$/, "El celular debe ser de 10 dígitos")
+			.regex(/^\d{10}$/, "El celular debe ser de 10 dígitos"),
+		email: z
+			.string({
+				required_error: ErrorFields.Required
+			})
+			.regex(/^[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, "Formato de correo incorrecto")
 	})
 	.required();

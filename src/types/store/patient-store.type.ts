@@ -1,5 +1,5 @@
 import { QueryDocumentSnapshot } from "firebase/firestore";
-import { Appointment, AppointmentData, ImagesBlob, ImagesDownloadLink, Patient, PatientData } from "../patient.type";
+import { Appointment, AppointmentData, ImagesBlob, ImagesDownloadLink, Patient } from "../patient.type";
 
 export type PatientStore = {
 	currentAppointment: Appointment;
@@ -17,7 +17,7 @@ export type PatientStore = {
 	getPatient: (id: string) => Promise<string>;
 	getPatients: () => Promise<void>;
 	saveAppointment: (newAppointment: AppointmentData) => Promise<string>;
-	savePatient: (newPatient: PatientData) => Promise<string>;
+	savePatient: (newPatient: Patient) => Promise<string>;
 	setTablePage: (page: number) => void;
 	setTableSize: (size: number) => void;
 	uploadImages: (images: ImagesBlob[]) => Promise<ImagesDownloadLink[]>;

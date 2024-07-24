@@ -63,6 +63,7 @@ export const DefaultValues: DefaultValue = {
 			dni: "",
 			firstName: "",
 			lastName: "",
+			email: "",
 			nameDoctorCreation: "",
 			idDoctorCreation: "",
 			locationAddress: "",
@@ -75,6 +76,7 @@ export const DefaultValues: DefaultValue = {
 		dni: "",
 		firstName: "",
 		lastName: "",
+		email: "",
 		locationAddress: "",
 		phone: "",
 		sex: Sex.Male

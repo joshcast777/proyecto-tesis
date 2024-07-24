@@ -10,6 +10,10 @@ type ImportMetaEnv = {
 	readonly VITE_FIREBASE_MEASUREMENT_ID: string;
 	readonly VITE_ADMIN_EMAIL: string;
 	readonly VITE_POSE_ESTIMATION_API: string;
+	readonly VITE_CLOUDINARY_CLOUD_NAME: string;
+	readonly VITE_CLOUDINARY_API_KEY: string;
+	readonly VITE_CLOUDINARY_APPI_SECRET: string;
+	readonly VITE_CLOUDINARY_UPLOAD_PRESSET: string;
 };
 
 type ImportMeta = {

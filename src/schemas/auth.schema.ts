@@ -2,10 +2,9 @@ import { ErrorFields } from "@/constants";
 import { z } from "zod";
 
 const mailValidation = (value: string): boolean => {
-	const regex1: RegExp = /^[a-zA-Z]+\.[a-zA-Z]+@ug\.edu\.ec$/;
-	const email2: string = "admin@admin.com";
+	const emailPattern: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-	return regex1.test(value) || value === email2;
+	return emailPattern.test(value);
 };
 
 export const authSchema = z

@@ -1,33 +1,47 @@
 # Pose Estimation
 
-This is the project that is part of the Poses Estimation thesis.
+Este proyecto de Angular es parte del proyecto de tesis de Estimación de Pose.
 
-## How to download
+## Table of contents
 
-Descargue el proyecto desde GitHub con Git
+- [Pose Estimation](#pose-estimation)
+	- [Table of contents](#table-of-contents)
+	- [Required](#required)
+	- [Instalation](#instalation)
+	- [Uso](#uso)
 
-```shell
-git clone https://github.com/victorVaras1199/tesis-pose
-```
+## Required
 
-## How to install
+Next technologies tools are necessary:
 
-This project uses PNPM as Package Manager so you have to enable it
+- Node.js
+- PNPM
 
-```shell
-corepack enable pnpm
-```
+## Instalation
 
-And then install the dependencies
+Follow the steps below to dowload the proyecto from GitHub:
 
-```shell
-pnpm i
-```
+1. Clone the repository:
 
-## How to execute
+	```bash
+	git clone https://github.com/tu-usuario/tu-proyecto-angular.git
+	```
 
-Execute using PNPM
+2. Navega al directorio del proyecto:
 
-```shell
-pnpm dev
-```
+	```bash
+	cd tu-proyecto-angular
+	```
+
+3. Instala las dependencias:
+
+	```bash
+	npm install
+	```
+
+## Uso
+
+Para ejecutar la aplicación en un entorno de desarrollo, usa el siguiente comando:
+
+```bash
+ng serve

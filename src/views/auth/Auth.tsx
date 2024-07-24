@@ -79,7 +79,7 @@ const authFieldObjects: AuthFieldObjects[] = Object.values(AuthFields).map(
  * @returns {React.ReactNode} The rendered auth page.
  */
 export default function Auth(): React.ReactNode {
-	const { clearIsAuthenticated, getCurrentDoctor, signInDoctor, signOutDoctor } = authStore();
+	const { clearIsAuthenticated, getCurrentUser, signInUser, signOutUser } = authStore();
 	const { checkDoctor } = doctorStore();
 	const { errorMessage, isLoading, clearErrorMessage, clearLocalStorage, enableLoading, disableLoading, setErrorMessage } = globalStore();
 
@@ -108,7 +108,7 @@ export default function Auth(): React.ReactNode {
 			return;
 		}
 
-		response = await signInDoctor(formData);
+		response = await signInUser(formData);
 
 		if (response === ErrorMessages.InvalidCredentials || response === ErrorMessages.CouldNotCompleteTask) {
 			clearInfo(response);
@@ -116,10 +116,10 @@ export default function Auth(): React.ReactNode {
 			return;
 		}
 
-		response = await getCurrentDoctor(response);
+		response = await getCurrentUser(response);
 
 		if (response !== "") {
-			await signOutDoctor();
+			await signOutUser();
 			clearInfo(response);
 
 			return;

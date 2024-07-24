@@ -141,7 +141,7 @@ export const columns: ColumnDef<DoctorTable>[] = [
 			return (
 				<div className="flex items-center justify-center gap-2">
 					<TooltipLayout
-						triggerContent={(): React.ReactNode => (
+						triggerContent={
 							<Button
 								size="icon"
 								className="bg-yellow-500 hover:bg-yellow-400"
@@ -151,12 +151,12 @@ export const columns: ColumnDef<DoctorTable>[] = [
 							>
 								<Pencil className="h-4 w-4" />
 							</Button>
-						)}
-						content={(): React.ReactNode => <p>Editar</p>}
+						}
+						content={<p>Editar</p>}
 					/>
 
 					<TooltipLayout
-						triggerContent={(): React.ReactNode => (
+						triggerContent={
 							<Button
 								size="icon"
 								className={cn({
@@ -167,8 +167,8 @@ export const columns: ColumnDef<DoctorTable>[] = [
 							>
 								{status ? <Trash2 className="h-4 w-4" /> : <ArchiveRestore className="h-4 w-4" />}
 							</Button>
-						)}
-						content={(): React.ReactNode => <p>{status ? "Eliminar" : "Restaurar"}</p>}
+						}
+						content={<p>{status ? "Eliminar" : "Restaurar"}</p>}
 					/>
 				</div>
 			);

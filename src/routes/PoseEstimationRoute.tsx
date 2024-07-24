@@ -1,3 +1,4 @@
+import { Loader } from "@/components/ui";
 import { LocalStorageKeys } from "@/enums";
 import { authStore, globalStore } from "@/store";
 import { Auth } from "@/views";
@@ -6,10 +7,9 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { PrivateRoute, PublicRoute } from "./components";
 import AdminRoutes from "./components/AdminRoutes";
 import DoctorRoutes from "./components/DoctorRoutes";
-import { Loader } from "@/components/ui";
 
 export default function PoseEstimationRoute(): React.ReactNode {
-	const { currentDoctor, isAuthenticated, clearIsAuthenticated, getCurrentDoctor } = authStore();
+	const { currentUser, isAuthenticated, clearIsAuthenticated, getCurrentUser } = authStore();
 	const { isLoading, enableLoading, disableLoading } = globalStore();
 
 	const asyncFunction = async (): Promise<void> => {
@@ -26,7 +26,7 @@ export default function PoseEstimationRoute(): React.ReactNode {
 			return;
 		}
 
-		const response: string = await getCurrentDoctor(localStorage.getItem(LocalStorageKeys.Id)!);
+		const response: string = await getCurrentUser(localStorage.getItem(LocalStorageKeys.Id)!);
 
 		if (response !== "") {
 			localStorage.removeItem(LocalStorageKeys.Id);
@@ -48,7 +48,7 @@ export default function PoseEstimationRoute(): React.ReactNode {
 
 	return (
 		<>
-			{currentDoctor.id === "" && isLoading && <Loader />}
+			{currentUser.id === "" && isLoading && <Loader />}
 
 			<Routes>
 				<Route

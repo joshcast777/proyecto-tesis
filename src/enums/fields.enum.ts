@@ -62,6 +62,7 @@ export enum PatientFormFields {
 	FirstName = "firstName",
 	LastName = "lastName",
 	BirthDate = "birthDate",
+	Email = "email",
 	Sex = "sex",
 	Phone = "phone",
 	LocationAddress = "locationAddress"

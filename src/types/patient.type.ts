@@ -18,6 +18,7 @@ export type PatientData = {
 	dni: string;
 	firstName: string;
 	lastName: string;
+	email: string;
 	nameDoctorCreation: string;
 	idDoctorCreation: string;
 	lastAppointmentDate: null | Date;
@@ -31,6 +32,7 @@ export type PatientForm = {
 	dni: string;
 	firstName: string;
 	lastName: string;
+	email: string;
 	locationAddress: string;
 	phone: string;
 	sex: Sex;
