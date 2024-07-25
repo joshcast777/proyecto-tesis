@@ -1,6 +1,6 @@
 import { cloudinaryUploadImages } from "@/cloudinary";
 import { DefaultValues, ErrorMessages } from "@/constants";
-import { firebaseEditPatient, firebaseGetAppointment, firebaseGetPatient, firebaseGetPatients, firebaseSaveAppointment, firebaseSavePatient } from "@/firebase/services/database";
+import { firebaseEditPatient, firebaseGetAppointment, firebaseGetAppointments, firebaseGetCurrentAppointment, firebaseGetPatient, firebaseGetPatients, firebaseSaveAppointment, firebaseSavePatient } from "@/firebase/services/database";
 import { ApiResponse, Appointment, AppointmentData, ImagesBlob, ImagesDownloadLink, Patient, PatientReferences } from "@/types";
 import { PatientStore } from "@/types/store";
 import { create } from "zustand";
@@ -8,6 +8,7 @@ import { devtools } from "zustand/middleware";
 
 export const patientStore = create<PatientStore>()(
 	devtools((set, get) => ({
+		appointments: [],
 		currentAppointment: DefaultValues.Appointment,
 		currentPatient: DefaultValues.Patient,
 		firstPatientDocumentSnapshot: null,
@@ -15,6 +16,15 @@ export const patientStore = create<PatientStore>()(
 		patients: [],
 		tablePage: 1,
 		tableSize: 3,
+		clearAppointments: (): void => {
+			set(
+				{
+					appointments: []
+				},
+				false,
+				"CLEAR_APPOINTMENTS"
+			);
+		},
 		clearCurrentAppointment: (): void => {
 			set(
 				{
@@ -59,6 +69,23 @@ export const patientStore = create<PatientStore>()(
 
 			return "";
 		},
+		getCurrentAppointment: async (id: string): Promise<string> => {
+			const apiResponse: ApiResponse<Appointment> = await firebaseGetCurrentAppointment(id);
+
+			if (!apiResponse.success) {
+				return apiResponse.message;
+			}
+
+			set(
+				{
+					currentAppointment: apiResponse.data!
+				},
+				false,
+				"SET_CURRENT_PATIENT"
+			);
+
+			return "";
+		},
 		getAppointment: async (): Promise<void> => {
 			const {
 				currentPatient: { id }
@@ -78,7 +105,21 @@ export const patientStore = create<PatientStore>()(
 				"SET_CURRENT_APPOINTMENT"
 			);
 		},
-		// getNextPatients: async (): Promise<void> => {},
+		getAppointments: async (): Promise<void> => {
+			const apiResponse: ApiResponse<Appointment[]> = await firebaseGetAppointments();
+
+			if (!apiResponse.success) {
+				return;
+			}
+
+			set(
+				{
+					appointments: apiResponse.data!
+				},
+				false,
+				"SET_APPOINTMENTS"
+			);
+		},
 		getPatient: async (id: string): Promise<string> => {
 			const apiResponse: ApiResponse<Patient> = await firebaseGetPatient(id);
 

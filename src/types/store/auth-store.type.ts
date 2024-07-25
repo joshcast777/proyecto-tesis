@@ -1,5 +1,5 @@
 // Types
-import { AuthForm, Doctor } from "@/types";
+import { AuthForm, Doctor, Patient } from "@/types";
 
 /**
  * Type representing the authentication store.
@@ -30,12 +30,21 @@ export type AuthStore = {
 	currentUser: Doctor;
 
 	/**
+	 * The currently authenticated doctor.
+	 *
+	 * @type {Doctor}
+	 */
+	currentPatient: Patient;
+
+	/**
 	 * Retrieves the current doctor's information based on their UID.
 	 *
 	 * @param {string} uid - The UID of the doctor.
 	 * @returns {Promise<string>} A promise that resolves with a response string.
 	 */
 	getCurrentUser: (uid: string) => Promise<string>;
+
+	getCurrentPatient: (id: string) => Promise<string>;
 
 	/**
 	 * Clears the authentication status.

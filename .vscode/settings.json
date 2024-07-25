@@ -147,7 +147,7 @@
 	"tailwindCSS.emmetCompletions": true,
 	"terminal.integrated.cursorWidth": 4,
 	"editor.renderWhitespace": "all",
-	"files.autoSave": "off",
+	"files.autoSave": "afterDelay",
 	"editor.tokenColorCustomizations": {
 		"textMateRules": [
 			{

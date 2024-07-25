@@ -61,6 +61,7 @@ export default function FormPatient(): React.ReactNode {
 			id: response,
 			data: {
 				...structuredClone(formData),
+				role: "patient",
 				lastAppointmentDate: Boolean(idParam) ? dataPatient.lastAppointmentDate : null,
 				birthDate: Boolean(idParam) ? dataPatient.birthDate : parse(formData.birthDate, "dd/MM/yyyy", new Date()),
 				creationDate: Boolean(idParam) ? dataPatient.creationDate : new Date(),

@@ -4,9 +4,7 @@ import { authStore, globalStore } from "@/store";
 import { Auth } from "@/views";
 import { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { PrivateRoute, PublicRoute } from "./components";
-import AdminRoutes from "./components/AdminRoutes";
-import DoctorRoutes from "./components/DoctorRoutes";
+import { AdminRoutes, DoctorRoutes, PatientRoutes, PrivateRoute, PublicRoute } from "./components";
 
 export default function PoseEstimationRoute(): React.ReactNode {
 	const { currentUser, isAuthenticated, clearIsAuthenticated, getCurrentUser } = authStore();
@@ -68,6 +66,8 @@ export default function PoseEstimationRoute(): React.ReactNode {
 								<Route path="admin/*" element={<AdminRoutes />} />
 
 								<Route path="doctor/*" element={<DoctorRoutes />} />
+
+								<Route path="patient/*" element={<PatientRoutes />} />
 							</Routes>
 						</PrivateRoute>
 					}

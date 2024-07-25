@@ -28,6 +28,36 @@ export async function firebaseEditPatient({ id, data }: Patient): Promise<ApiRes
 	}
 }
 
+export async function firebaseGetCurrentAppointment(id: string): Promise<ApiResponse<Appointment>> {
+	try {
+		const appointmentSnapshot: DocumentSnapshot = await getDoc(doc(database, `${Collections.Patients}/${localStorage.getItem(LocalStorageKeys.Id)}/${Collections.Appointments}`, id));
+
+		if (!appointmentSnapshot.exists()) {
+			return errorApiResponse<Appointment>({
+				message: ErrorMessages.DataNotFound
+			});
+		}
+
+		const appointmentData: DocumentData = appointmentSnapshot.data();
+
+		return successApiResponse<Appointment>({
+			data: {
+				id: appointmentSnapshot.id,
+				data: {
+					...(appointmentData as AppointmentData),
+					date: (appointmentData[AppointmentFields.Date] as Timestamp).toDate()
+				}
+			}
+		});
+	} catch (error: any) {
+		console.error(error);
+
+		return errorApiResponse<Appointment>({
+			message: error.code
+		});
+	}
+}
+
 export async function firebaseGetAppointment(patientId: string): Promise<ApiResponse<Appointment>> {
 	try {
 		const appointmentsRef: CollectionReference = collection(database, `${Collections.Patients}/${patientId}/${Collections.Appointments}`);
@@ -59,6 +89,46 @@ export async function firebaseGetAppointment(patientId: string): Promise<ApiResp
 		console.error(error);
 
 		return errorApiResponse<Appointment>({
+			message: error.code
+		});
+	}
+}
+
+export async function firebaseGetAppointments(): Promise<ApiResponse<Appointment[]>> {
+	try {
+		const appointmentsRef: CollectionReference = collection(database, `${Collections.Patients}/${localStorage.getItem(LocalStorageKeys.Id)}/${Collections.Appointments}`);
+
+		const orderStatement: QueryOrderByConstraint = orderBy(AppointmentFields.Date, "desc");
+
+		const appointmentQuery: Query = query(appointmentsRef, orderStatement);
+
+		const appointmentsSnapshot: QuerySnapshot = await getDocs(appointmentQuery);
+
+		if (appointmentsSnapshot.size === 0) {
+			return successApiResponse<Appointment[]>({
+				data: []
+			});
+		}
+
+		const appointments: Appointment[] = appointmentsSnapshot.docs.map((appointment: QueryDocumentSnapshot): Appointment => {
+			const appointmentData: DocumentData = appointment.data();
+
+			return {
+				id: appointment.id,
+				data: {
+					...(appointmentData as AppointmentData),
+					date: (appointmentData[AppointmentFields.Date] as Timestamp).toDate()
+				}
+			};
+		});
+
+		return successApiResponse<Appointment[]>({
+			data: appointments
+		});
+	} catch (error: any) {
+		console.error(error);
+
+		return errorApiResponse<Appointment[]>({
 			message: error.code
 		});
 	}
@@ -103,16 +173,6 @@ export async function firebaseGetPatients(): Promise<ApiResponse<PatientReferenc
 		const orderStatement: QueryOrderByConstraint = orderBy(PatientFields.LastAppointmentDate, "desc");
 
 		const whereStatement: QueryFieldFilterConstraint = where(PatientFields.IdDoctorCreation, QueryOperator.EqualTo, localStorage.getItem(LocalStorageKeys.Id)!);
-
-		// let patientQuery: Query;
-
-		// if (direction === "NEXT" && lastPatientDocumentSnapshot !== null) {
-		// 	patientQuery = query(patientsRef, orderStatement, startAfter(lastPatientDocumentSnapshot), limit(size));
-		// } else if (direction === "PREVIOUS" && firstPatientDocumentSnapshot !== null) {
-		// 	patientQuery = query(patientsRef, orderStatement, endBefore(firstPatientDocumentSnapshot), limit(size));
-		// } else {
-		// 	patientQuery = query(patientsRef, orderStatement, limit(size));
-		// }
 
 		const patientQuery: Query = query(patientsRef, whereStatement, orderStatement);
 

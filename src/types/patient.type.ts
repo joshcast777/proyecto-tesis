@@ -1,6 +1,6 @@
+import { Sex } from "@/enums";
 import { QueryDocumentSnapshot } from "firebase/firestore";
 import { Global } from "./global.type";
-import { Sex } from "@/enums";
 
 export type PatientReferences = {
 	firstPatientDocumentSnapshot: null | QueryDocumentSnapshot;
@@ -19,6 +19,7 @@ export type PatientData = {
 	firstName: string;
 	lastName: string;
 	email: string;
+	role: string;
 	nameDoctorCreation: string;
 	idDoctorCreation: string;
 	lastAppointmentDate: null | Date;
@@ -68,5 +69,13 @@ export type PatientTable = {
 	fullName: string;
 	age: number;
 	sex: Sex;
+	actions: React.ReactNode;
+};
+
+export type AppointmentTable = {
+	id: string;
+	index: number;
+	date: Date;
+	nameDoctor: string;
 	actions: React.ReactNode;
 };

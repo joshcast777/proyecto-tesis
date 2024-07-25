@@ -5,8 +5,8 @@ import { useEffect } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
 // React Hook Form
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
 // Components
 import { InputFloatingLabel } from "@/components/auth";
@@ -79,7 +79,7 @@ const authFieldObjects: AuthFieldObjects[] = Object.values(AuthFields).map(
  * @returns {React.ReactNode} The rendered auth page.
  */
 export default function Auth(): React.ReactNode {
-	const { clearIsAuthenticated, getCurrentUser, signInUser, signOutUser } = authStore();
+	const { clearIsAuthenticated, getCurrentPatient, getCurrentUser, signInUser, signOutUser } = authStore();
 	const { checkDoctor } = doctorStore();
 	const { errorMessage, isLoading, clearErrorMessage, clearLocalStorage, enableLoading, disableLoading, setErrorMessage } = globalStore();
 
@@ -100,12 +100,16 @@ export default function Auth(): React.ReactNode {
 	const onSubmit = async (formData: AuthForm): Promise<void> => {
 		enableLoading();
 
-		let response: string = await checkDoctor(formData.email);
+		let response: string = "";
 
-		if (response !== "") {
-			clearInfo(response);
+		if (formData.email.includes("@ug")) {
+			response = await checkDoctor(formData.email);
 
-			return;
+			if (response !== "") {
+				clearInfo(response);
+
+				return;
+			}
 		}
 
 		response = await signInUser(formData);
@@ -116,7 +120,11 @@ export default function Auth(): React.ReactNode {
 			return;
 		}
 
-		response = await getCurrentUser(response);
+		if (formData.email.includes("@ug")) {
+			response = await getCurrentUser(response);
+		} else {
+			response = await getCurrentPatient(response);
+		}
 
 		if (response !== "") {
 			await signOutUser();

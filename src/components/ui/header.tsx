@@ -17,7 +17,7 @@ import { showToast } from "@/lib";
 import { ToastTitles, ToastTypes } from "@/enums";
 
 export function Header(): React.ReactNode {
-	const { clearIsAuthenticated, signOutDoctor: signOutUser } = authStore();
+	const { clearIsAuthenticated, signOutUser } = authStore();
 	const { errorMessage, clearErrorMessage, clearLocalStorage, setErrorMessage } = globalStore();
 
 	const signOutSession = async (): Promise<void> => {

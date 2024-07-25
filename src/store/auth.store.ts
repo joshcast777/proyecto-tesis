@@ -3,11 +3,11 @@ import { DefaultValues, ErrorMessages } from "@/constants";
 
 // Firebase
 import { firebaseSignInDoctor, firebaseSignOutDoctor, firebaseSignUpDoctor } from "@/firebase/services/auth";
-import { firebaseGetDoctor } from "@/firebase/services/database";
+import { firebaseGetDoctor, firebaseGetPatient } from "@/firebase/services/database";
 
 // Enums & Types
 import { LocalStorageKeys } from "@/enums";
-import { ApiResponse, AuthForm, Doctor } from "@/types";
+import { ApiResponse, AuthForm, Doctor, Patient } from "@/types";
 import { AuthStore } from "@/types/store";
 
 // Zustand
@@ -25,6 +25,7 @@ export const authStore = create<AuthStore>()(
 	devtools((set) => ({
 		isAuthenticated: Boolean(localStorage.getItem(LocalStorageKeys.Id)) && Boolean(localStorage.getItem(LocalStorageKeys.Role)),
 		currentUser: DefaultValues.Doctor,
+		currentPatient: DefaultValues.Patient,
 		clearIsAuthenticated: (): void => {
 			set(
 				{
@@ -62,6 +63,44 @@ export const authStore = create<AuthStore>()(
 			set(
 				{
 					currentUser: {
+						id,
+						data
+					},
+					isAuthenticated: true
+				},
+				false,
+				"SET_CURRENT_USER"
+			);
+
+			return "";
+		},
+		getCurrentPatient: async (id: string): Promise<string> => {
+			const apiResponse: ApiResponse<Patient> = await firebaseGetPatient(id);
+
+			if (!apiResponse.success) {
+				localStorage.removeItem(LocalStorageKeys.Id);
+				localStorage.removeItem(LocalStorageKeys.Role);
+
+				set(
+					{
+						currentPatient: DefaultValues.Patient,
+						isAuthenticated: false
+					},
+					false,
+					"CLEAR_CURRENT_DOCTOR"
+				);
+
+				return apiResponse.message;
+			}
+
+			const { data } = apiResponse.data!;
+
+			localStorage.setItem(LocalStorageKeys.Id, id);
+			localStorage.setItem(LocalStorageKeys.Role, data.role);
+
+			set(
+				{
+					currentPatient: {
 						id,
 						data
 					},
