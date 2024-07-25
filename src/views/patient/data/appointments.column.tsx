@@ -1,4 +1,4 @@
-import { Button, TooltipLayout } from "@/components/ui";
+import { Button } from "@/components/ui";
 import { AppointmentTable } from "@/types";
 import { CellContext, ColumnDef, HeaderContext } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -73,20 +73,15 @@ export const columns: ColumnDef<AppointmentTable>[] = [
 
 			return (
 				<div className="flex items-center justify-center gap-2">
-					<TooltipLayout
-						triggerContent={
-							<Button
-								size="icon"
-								className="bg-blue-500 hover:bg-blue-400"
-								onClick={(): void => {
-									navigate(`/patient/appointment/${id}`);
-								}}
-							>
-								<Eye className="h-4 w-4" />
-							</Button>
-						}
-						content={<p>Ver consulta</p>}
-					/>
+					<Button
+						size="icon"
+						className="bg-blue-500 hover:bg-blue-400"
+						onClick={(): void => {
+							navigate(`/patient/appointment/${id}`);
+						}}
+					>
+						<Eye className="h-4 w-4" />
+					</Button>
 				</div>
 			);
 		}
