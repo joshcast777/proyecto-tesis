@@ -53,7 +53,7 @@ export default function FormPoseEstimation(): React.ReactNode {
 	const navigate: NavigateFunction = useNavigate();
 
 	const estimatePoseRequest = async (formData: FormData): Promise<void> => {
-		const response: Response = await fetch(`${VITE_POSE_ESTIMATION_API}estimate-pose`, {
+		const response: Response = await fetch(`${VITE_POSE_ESTIMATION_API}/estimate-pose`, {
 			method: "POST",
 			body: formData
 		});
