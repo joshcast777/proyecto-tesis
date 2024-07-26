@@ -30,6 +30,7 @@ import { DoctorData, DoctorForm, SexData } from "@/types";
 import { sex } from "@/data";
 import { cn, showToast } from "@/lib";
 import { format, parse } from "date-fns";
+import { BackgroundDoctor } from "@/assets/images";
 
 const { VITE_ADMIN_EMAIL } = import.meta.env;
 
@@ -192,7 +193,7 @@ export default function FormDoctor(): React.ReactNode {
 	}
 
 	return (
-		<div className="flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url('/src/assets/images/background-doctor.webp')] bg-cover bg-center bg-no-repeat p-8">
+		<div className={`flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url(${BackgroundDoctor})] bg-cover bg-center bg-no-repeat p-8`}>
 			<div className="container rounded bg-blue-100/75 p-5 text-gray-900 lg:max-w-[1024px]">
 				<FormTitle>{idParam === undefined ? "Ingreso de doctor" : "Editar doctor"}</FormTitle>
 

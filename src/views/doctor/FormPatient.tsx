@@ -17,6 +17,7 @@ import { format, parse } from "date-fns";
 import { FileText, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
+import { BackgroundPatient } from "@/assets/images";
 
 export default function FormPatient(): React.ReactNode {
 	const [disabled, setDisabled] = useState<boolean>(false);
@@ -182,7 +183,7 @@ export default function FormPatient(): React.ReactNode {
 	}
 
 	return (
-		<div className="flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url('/src/assets/images/background-patient.webp')] bg-cover bg-center bg-no-repeat p-8">
+		<div className={`flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url(${BackgroundPatient})] bg-cover bg-center bg-no-repeat p-8`}>
 			<div className="container rounded bg-blue-300/75 p-5 text-gray-900 lg:max-w-[1024px]">
 				<FormTitle>Información del paciente</FormTitle>
 

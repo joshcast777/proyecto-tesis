@@ -16,6 +16,8 @@ import { showToast } from "@/lib";
 // Enums & Types
 import { ToastTitles, ToastTypes } from "@/enums";
 
+import { UgLogo } from "@/assets/images";
+
 export function Header(): React.ReactNode {
 	const { clearIsAuthenticated, signOutUser } = authStore();
 	const { errorMessage, clearErrorMessage, clearLocalStorage, setErrorMessage } = globalStore();
@@ -48,7 +50,7 @@ export function Header(): React.ReactNode {
 	return (
 		<header className="py-3 shadow-md">
 			<div className="container flex h-20 items-center justify-between">
-				<img src="/src/assets/images/ug-logo.png" alt="UG Logo" className="h-full" />
+				<img src={UgLogo} alt="UG Logo" className="h-full" />
 
 				<Button onClick={signOutSession}>Cerrar sesión</Button>
 			</div>

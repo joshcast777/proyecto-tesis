@@ -1,4 +1,4 @@
-import { ImageButtons, ImageUpload } from "@/components/doctor";
+import { ImageButtons } from "@/components/doctor";
 import PatientPdf from "@/components/doctor/patient-pdf";
 import { Button, FormButtons, FormTitle, Loader, Separator, Textarea } from "@/components/ui";
 import { ToastIcons } from "@/constants/ui";
@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { FileText } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
+import { NoImage } from "@/assets/images";
 
 const { VITE_POSE_ESTIMATION_API } = import.meta.env;
 
@@ -22,8 +23,8 @@ type PoseEstimationValue = {
 };
 
 const defaultPoseEstimationValue: PoseEstimationValue = {
-	uploadedImage: "/src/assets/images/no-image.png",
-	estimatedImage: "/src/assets/images/no-image.png",
+	uploadedImage: NoImage,
+	estimatedImage: NoImage,
 	summary: "",
 	isValid(): boolean {
 		return this.uploadedImage !== "" && this.estimatedImage !== "" && this.summary !== "";
@@ -218,7 +219,16 @@ export default function FormPoseEstimation(): React.ReactNode {
 
 				<div className="mt-10 space-y-10 md:flex md:space-x-5 md:space-y-0">
 					<div className="md:w-1/2">
-						<ImageUpload uploadedImageSrc={poseEstimationValue.uploadedImage} />
+						<div className="flex aspect-[9/14] items-center justify-center rounded border border-gray-500">
+							<img
+								className={cn("h-full w-full rounded", {
+									"object-cover": poseEstimationValue.uploadedImage.includes("assets"),
+									"object-contain": !poseEstimationValue.uploadedImage.includes("assets")
+								})}
+								src={poseEstimationValue.uploadedImage}
+								alt="Uploaded image"
+							/>
+						</div>
 
 						<ImageButtons
 							disabledRemoveButton={poseEstimationValue.uploadedImage.includes("no-image")}
