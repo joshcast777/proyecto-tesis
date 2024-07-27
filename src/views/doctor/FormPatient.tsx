@@ -3,7 +3,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 
 import PatientPdf from "@/components/doctor/patient-pdf";
 import { LastAppointmentSummary } from "@/components/patient";
-import { Button, Form, FormButtons, FormControl, FormField, FormItem, FormLabel, FormMessage, FormTitle, Input, InputMask, Loader, RadioGroup, RadioGroupLayout, Separator } from "@/components/ui";
+import { Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormTitle, Input, InputMask, Loader, RadioGroup, RadioGroupLayout, Separator } from "@/components/ui";
 import { DefaultValues, ErrorMessages } from "@/constants";
 import { ToastIcons } from "@/constants/ui";
 import { sex } from "@/data";
@@ -14,13 +14,12 @@ import { authStore, globalStore, patientStore } from "@/store";
 import { Patient, PatientForm, SexData } from "@/types";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { format, parse } from "date-fns";
-import { FileText, Loader2 } from "lucide-react";
+import { FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
-import { BackgroundPatient } from "@/assets/images";
 
 export default function FormPatient(): React.ReactNode {
-	const [disabled, setDisabled] = useState<boolean>(false);
+	const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
 	const { currentUser, signInUser, signUpUser } = authStore();
 	const {
@@ -53,7 +52,7 @@ export default function FormPatient(): React.ReactNode {
 			return;
 		}
 
-		setDisabled(true);
+		// setDisabled(true);
 		enableLoading();
 
 		let response: string = "";
@@ -81,7 +80,7 @@ export default function FormPatient(): React.ReactNode {
 				setErrorMessage(response);
 
 				disableLoading();
-				setDisabled(false);
+				// setDisabled(false);
 
 				return;
 			}
@@ -105,23 +104,25 @@ export default function FormPatient(): React.ReactNode {
 			setErrorMessage(response);
 
 			disableLoading();
-			setDisabled(false);
+			// setDisabled(false);
 
 			return;
 		}
 
 		disableLoading();
+		setIsSubmitted(true);
+
+		setTimeout(() => {
+			navigate(`/doctor/appointment/pose-estimation/${idParam !== undefined ? idParam : newPatient.id}`, {
+				replace: true
+			});
+		}, 3000);
 
 		showToast({
 			type: ToastTypes.Success,
 			title: ToastTitles.Success,
 			message: "Paciente registrado, será redireccionado",
-			icon: ToastIcons.Success,
-			onDismissAndOnAutoCloseFunctions: (): void => {
-				navigate(`/doctor/appointment/pose-estimation/${idParam !== undefined ? idParam : newPatient.id}`, {
-					replace: true
-				});
-			}
+			icon: ToastIcons.Success
 		});
 	};
 
@@ -183,7 +184,7 @@ export default function FormPatient(): React.ReactNode {
 	}
 
 	return (
-		<div className={`flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url(${BackgroundPatient})] bg-cover bg-center bg-no-repeat p-8`}>
+		<div className="flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url('/src/assets/images/background-patient.webp')] bg-cover bg-center bg-no-repeat p-8">
 			<div className="container rounded bg-blue-300/75 p-5 text-gray-900 lg:max-w-[1024px]">
 				<FormTitle>Información del paciente</FormTitle>
 
@@ -411,19 +412,41 @@ export default function FormPatient(): React.ReactNode {
 							/>
 						</div>
 
+						{/* <FormButtons
+							disabled={disabled}
+							resetButtonLabel="Cancelar"
+							resetFunction={form.reset}
+							resetRoute="/doctor/dashboard"
+							saveButtonLabel="Continuar"
+							waitingButtonLabel={
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" /> Por favor, espere...
+								</>
+							}
+						/> */}
+
 						{idParam === undefined ? (
-							<FormButtons
-								disabled={disabled}
-								resetButtonLabel="Cancelar"
-								resetFunction={form.reset}
-								resetRoute="/doctor/dashboard"
-								saveButtonLabel="Continuar"
-								waitingButtonLabel={
-									<>
-										<Loader2 className="mr-2 h-4 w-4 animate-spin" /> Por favor, espere...
-									</>
-								}
-							/>
+							<div className="mt-5 flex items-center justify-between sm:justify-end sm:gap-5">
+								<Button
+									type="reset"
+									variant="outline"
+									disabled={isSubmitted}
+									className="w-28 border-blue-700 text-blue-700 hover:bg-blue-50 hover:text-blue-700 lg:text-lg"
+									onClick={(): void => {
+										form.reset();
+
+										navigate("/doctor/dashboard", {
+											replace: true
+										});
+									}}
+								>
+									Volver
+								</Button>
+
+								<Button type="submit" disabled={isSubmitted} className="min-w-28 bg-blue-700 hover:bg-blue-800 lg:text-lg">
+									Guardar
+								</Button>
+							</div>
 						) : (
 							<>
 								<Separator className="mb-6" />
@@ -432,7 +455,7 @@ export default function FormPatient(): React.ReactNode {
 
 								<LastAppointmentSummary />
 
-								<FormButtons
+								{/* <FormButtons
 									disabled={disabled}
 									resetButtonLabel="Cancelar"
 									resetFunction={(): void => {
@@ -447,7 +470,32 @@ export default function FormPatient(): React.ReactNode {
 											<Loader2 className="mr-2 h-4 w-4 animate-spin" /> Por favor, espere...
 										</>
 									}
-								/>
+								/> */}
+
+								<div className="mt-5 flex items-center justify-between sm:justify-end sm:gap-5">
+									<Button
+										type="reset"
+										variant="outline"
+										disabled={isSubmitted}
+										className="w-28 border-blue-700 text-blue-700 hover:bg-blue-50 hover:text-blue-700 lg:text-lg"
+										onClick={(): void => {
+											form.reset();
+
+											clearCurrentPatient();
+											clearCurrentAppointment();
+
+											navigate("/doctor/dashboard", {
+												replace: true
+											});
+										}}
+									>
+										Volver
+									</Button>
+
+									<Button type="submit" disabled={isSubmitted} className="min-w-28 bg-blue-700 hover:bg-blue-800 lg:text-lg">
+										Continuar
+									</Button>
+								</div>
 							</>
 						)}
 					</form>

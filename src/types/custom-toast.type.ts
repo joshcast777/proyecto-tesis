@@ -5,11 +5,8 @@ export type CustomToast = {
 	title?: string;
 	message?: string;
 	icon?: React.ReactNode;
-	action?:
-		| React.ReactNode
-		| {
-				label: string;
-		  };
+	actionLabel?: string;
+	onActionClick?: () => void;
 	onDismissAndOnAutoCloseFunctions?: () => void;
 	onDismissFunction?: () => void;
 	onAutoCloseFunction?: () => void;

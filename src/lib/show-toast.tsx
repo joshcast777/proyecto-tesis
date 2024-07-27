@@ -2,16 +2,9 @@ import { ToastContent } from "@/components/ui";
 import { ToastIcons } from "@/constants/ui";
 import { ToastTitles, ToastTypeClasses, ToastTypes } from "@/enums";
 import { CustomToast } from "@/types";
-import { toast } from "sonner";
+import { ExternalToast, toast } from "sonner";
 
-export function showToast(
-	{ type, title, message, icon, onAutoCloseFunction, onDismissFunction, onDismissAndOnAutoCloseFunctions }: CustomToast = {
-		type: ToastTypes.Success,
-		title: ToastTitles.Success,
-		message: "Message",
-		icon: ToastIcons.Success
-	}
-): void {
+export function showToast({ actionLabel = "", type = ToastTypes.Success, title = ToastTitles.Success, message = "", icon = ToastIcons.Success, onActionClick, onAutoCloseFunction, onDismissFunction, onDismissAndOnAutoCloseFunctions }: CustomToast): void {
 	let className: string = "";
 
 	if (type === ToastTypes.Error) {
@@ -24,12 +17,12 @@ export function showToast(
 		className = ToastTypeClasses.Warn;
 	}
 
-	toast.error("", {
+	const data: ExternalToast = {
 		className,
-		description: <ToastContent title={title!} message={message!} />,
+		description: <ToastContent title={title} message={message} />,
 		icon: icon,
-		duration: 3000,
 		dismissible: false,
+		duration: 3000,
 		onDismiss: (): void => {
 			if (onDismissFunction !== undefined) {
 				onDismissFunction();
@@ -48,5 +41,14 @@ export function showToast(
 				onDismissAndOnAutoCloseFunctions();
 			}
 		}
-	});
+	};
+
+	if (onActionClick !== undefined) {
+		data.action = {
+			label: actionLabel,
+			onClick: onActionClick
+		};
+	}
+
+	toast("", data);
 }

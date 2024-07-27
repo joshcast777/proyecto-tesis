@@ -8,8 +8,7 @@ import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 // Components
-import { Form, FormButtons, FormControl, FormField, FormItem, FormLabel, FormMessage, FormTitle, Input, InputMask, Loader, RadioGroup, RadioGroupLayout } from "@/components/ui";
-import { Loader2 } from "lucide-react";
+import { Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormTitle, Input, InputMask, Loader, RadioGroup, RadioGroupLayout } from "@/components/ui";
 
 // Constants
 import { DefaultValues, ErrorMessages } from "@/constants";
@@ -30,7 +29,6 @@ import { DoctorData, DoctorForm, SexData } from "@/types";
 import { sex } from "@/data";
 import { cn, showToast } from "@/lib";
 import { format, parse } from "date-fns";
-import { BackgroundDoctor } from "@/assets/images";
 
 const { VITE_ADMIN_EMAIL } = import.meta.env;
 
@@ -41,7 +39,7 @@ const { VITE_ADMIN_EMAIL } = import.meta.env;
  * @returns {React.ReactNode} The rendered form page for doctor.
  */
 export default function FormDoctor(): React.ReactNode {
-	const [disabled, setDisabled] = useState<boolean>(false);
+	const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
 	const { signInUser, signOutUser, signUpUser } = authStore();
 	const {
@@ -71,7 +69,6 @@ export default function FormDoctor(): React.ReactNode {
 		if (response === ErrorMessages.CouldNotCompleteTask) {
 			setErrorMessage(response);
 
-			setDisabled(false);
 			disableLoading();
 
 			return false;
@@ -106,7 +103,6 @@ export default function FormDoctor(): React.ReactNode {
 		if (response !== "") {
 			setErrorMessage(response);
 
-			setDisabled(false);
 			disableLoading();
 
 			return false;
@@ -118,7 +114,6 @@ export default function FormDoctor(): React.ReactNode {
 	};
 
 	const onSubmit: SubmitHandler<DoctorForm> = async (formData: DoctorForm): Promise<void> => {
-		setDisabled(true);
 		enableLoading();
 
 		if (!Boolean(idParam)) {
@@ -135,16 +130,19 @@ export default function FormDoctor(): React.ReactNode {
 			return;
 		}
 
+		setIsSubmitted(true);
+
+		setTimeout((): void => {
+			navigate("/admin/dashboard", {
+				replace: true
+			});
+		}, 3000);
+
 		showToast({
 			type: ToastTypes.Success,
 			title: ToastTitles.Success,
 			message: "Doctor registrado, será redireccionado",
-			icon: ToastIcons.Success,
-			onDismissAndOnAutoCloseFunctions: (): void => {
-				navigate("/admin/dashboard", {
-					replace: true
-				});
-			}
+			icon: ToastIcons.Success
 		});
 	};
 
@@ -154,7 +152,6 @@ export default function FormDoctor(): React.ReactNode {
 		const response: string = await getDoctor(id);
 
 		if (response !== "") {
-			// clearLocalStorage();
 			setErrorMessage(response);
 
 			disableLoading();
@@ -183,6 +180,8 @@ export default function FormDoctor(): React.ReactNode {
 				title: ToastTitles.Error,
 				message: errorMessage,
 				icon: ToastIcons.Error,
+				actionLabel: "Ok",
+				onActionClick: clearErrorMessage,
 				onDismissAndOnAutoCloseFunctions: clearErrorMessage
 			});
 		}
@@ -193,7 +192,7 @@ export default function FormDoctor(): React.ReactNode {
 	}
 
 	return (
-		<div className={`flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url(${BackgroundDoctor})] bg-cover bg-center bg-no-repeat p-8`}>
+		<div className="flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url('/src/assets/images/background-doctor.webp')] bg-cover bg-center bg-no-repeat p-8">
 			<div className="container rounded bg-blue-100/75 p-5 text-gray-900 lg:max-w-[1024px]">
 				<FormTitle>{idParam === undefined ? "Ingreso de doctor" : "Editar doctor"}</FormTitle>
 
@@ -410,18 +409,27 @@ export default function FormDoctor(): React.ReactNode {
 							/>
 						</div>
 
-						<FormButtons
-							disabled={disabled}
-							resetButtonLabel="Cancelar"
-							resetFunction={form.reset}
-							resetRoute="/admin/dashboard"
-							saveButtonLabel="Guardar"
-							waitingButtonLabel={
-								<>
-									<Loader2 className="mr-2 h-4 w-4 animate-spin" /> Por favor, espere...
-								</>
-							}
-						/>
+						<div className="mt-5 flex items-center justify-between sm:justify-end sm:gap-5">
+							<Button
+								type="reset"
+								variant="outline"
+								disabled={isSubmitted}
+								className="w-28 border-blue-700 text-blue-700 hover:bg-blue-50 hover:text-blue-700 lg:text-lg"
+								onClick={(): void => {
+									form.reset();
+
+									navigate("/admin/dashboard", {
+										replace: true
+									});
+								}}
+							>
+								Volver
+							</Button>
+
+							<Button type="submit" disabled={isSubmitted} className="min-w-28 bg-blue-700 hover:bg-blue-800 lg:text-lg">
+								Guardar
+							</Button>
+						</div>
 					</form>
 				</Form>
 			</div>

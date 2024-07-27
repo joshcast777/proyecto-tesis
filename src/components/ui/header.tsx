@@ -17,10 +17,13 @@ import { showToast } from "@/lib";
 import { ToastTitles, ToastTypes } from "@/enums";
 
 import { UgLogo } from "@/assets/images";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 
 export function Header(): React.ReactNode {
 	const { clearIsAuthenticated, signOutUser } = authStore();
 	const { errorMessage, clearErrorMessage, clearLocalStorage, setErrorMessage } = globalStore();
+
+	const navigate: NavigateFunction = useNavigate();
 
 	const signOutSession = async (): Promise<void> => {
 		const response: string = await signOutUser();
@@ -33,6 +36,8 @@ export function Header(): React.ReactNode {
 
 		clearIsAuthenticated();
 		clearLocalStorage();
+
+		navigate("/auth");
 	};
 
 	useEffect((): void => {
@@ -42,6 +47,8 @@ export function Header(): React.ReactNode {
 				title: ToastTitles.Error,
 				message: errorMessage,
 				icon: ToastIcons.Error,
+				actionLabel: "Ok",
+				onActionClick: clearErrorMessage,
 				onDismissAndOnAutoCloseFunctions: clearErrorMessage
 			});
 		}

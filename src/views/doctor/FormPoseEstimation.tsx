@@ -1,6 +1,6 @@
 import { ImageButtons } from "@/components/doctor";
 import PatientPdf from "@/components/doctor/patient-pdf";
-import { Button, FormButtons, FormTitle, Loader, Separator, Textarea } from "@/components/ui";
+import { Button, FormTitle, Loader, Separator, Textarea } from "@/components/ui";
 import { ToastIcons } from "@/constants/ui";
 import { LocalStorageKeys, ToastTitles, ToastTypes } from "@/enums";
 import { cn, showToast } from "@/lib";
@@ -39,8 +39,7 @@ function createPoseEstimationValue(overrides: Partial<PoseEstimationValue>): Pos
 }
 
 export default function FormPoseEstimation(): React.ReactNode {
-	const [saved, setSaved] = useState<boolean>(false);
-	const [buttonsDisabled, setButtonsDisabled] = useState<boolean>(false);
+	const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 	const [poseEstimationValue, setPoseEstimationValue] = useState<PoseEstimationValue>(defaultPoseEstimationValue);
 
 	const buttonRef = useRef<HTMLButtonElement>(null);
@@ -129,7 +128,6 @@ export default function FormPoseEstimation(): React.ReactNode {
 			setErrorMessage(response);
 
 			disableLoading();
-			setButtonsDisabled(false);
 
 			return false;
 		}
@@ -152,7 +150,6 @@ export default function FormPoseEstimation(): React.ReactNode {
 			setErrorMessage(response);
 
 			disableLoading();
-			setButtonsDisabled(false);
 
 			return false;
 		}
@@ -162,7 +159,6 @@ export default function FormPoseEstimation(): React.ReactNode {
 
 	const handleClickSubmit = async (): Promise<void> => {
 		enableLoading();
-		setButtonsDisabled(true);
 
 		const downloadLinks: ImagesDownloadLink[] = await uploadImagesToCloud();
 
@@ -181,7 +177,7 @@ export default function FormPoseEstimation(): React.ReactNode {
 		}
 
 		disableLoading();
-		setSaved(true);
+		setIsSubmitted(true);
 
 		showToast({
 			type: ToastTypes.Success,
@@ -289,8 +285,8 @@ export default function FormPoseEstimation(): React.ReactNode {
 					<PDFDownloadLink document={<PatientPdf patientData={currentPatient.data} appointmentData={currentAppointment.data} />} fileName={`paciente-${format(new Date(), "dd-MM-yyyy")}`} className="my-10 flex justify-end">
 						<Button
 							className={cn("mt-5 w-full bg-purple-700 hover:bg-purple-800 sm:w-auto lg:text-lg", {
-								flex: saved,
-								hidden: !saved
+								flex: isSubmitted,
+								hidden: !isSubmitted
 							})}
 							onClick={(): void => {
 								setTimeout(() => {
@@ -304,8 +300,45 @@ export default function FormPoseEstimation(): React.ReactNode {
 						</Button>
 					</PDFDownloadLink>
 
-					<FormButtons
-						disabled={buttonsDisabled}
+					<div className="mt-5 flex items-center justify-between sm:justify-end sm:gap-5">
+						<Button
+							type="reset"
+							variant="outline"
+							disabled={poseEstimationValue.summary === "" || isSubmitted}
+							className="w-28 border-blue-700 text-blue-700 hover:bg-blue-50 hover:text-blue-700 lg:text-lg"
+							onClick={(): void => {
+								clearCurrentPatient();
+								clearCurrentAppointment();
+
+								navigate("/doctor/dashboard", {
+									replace: true
+								});
+							}}
+						>
+							Volver
+						</Button>
+
+						{isSubmitted ? (
+							<Button type="button" disabled={poseEstimationValue.summary === ""} className="min-w-28 bg-blue-700 hover:bg-blue-800 lg:text-lg" onClick={handleClickSubmit}>
+								Guardar
+							</Button>
+						) : (
+							<Button
+								type="button"
+								className="min-w-28 bg-blue-700 hover:bg-blue-800 lg:text-lg"
+								onClick={(): void => {
+									navigate("/doctor/dashboard", {
+										replace: true
+									});
+								}}
+							>
+								Finalizar
+							</Button>
+						)}
+					</div>
+
+					{/* <FormButtons
+						disabled={isSubmitted}
 						disabledSaveButton={poseEstimationValue.estimatedImage.includes("no-image") || poseEstimationValue.summary === ""}
 						resetButtonLabel="Cancelar"
 						resetFunction={(): void => {
@@ -317,7 +350,7 @@ export default function FormPoseEstimation(): React.ReactNode {
 						resetRoute="/doctor/dashboard"
 						saveButtonLabel="Guardar"
 						waitingButtonLabel="Por favor, espere..."
-					/>
+					/> */}
 				</div>
 			</div>
 		</div>

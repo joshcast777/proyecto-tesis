@@ -29,7 +29,6 @@ import { showToast } from "@/lib";
 // Enums & Types
 import { AuthFields, LocalStorageKeys, ToastTitles, ToastTypes } from "@/enums";
 import { AuthForm } from "@/types";
-import { BackgroundLogin } from "@/assets/images";
 
 /**
  * Type representing the authentication fields.
@@ -154,7 +153,7 @@ export default function Auth(): React.ReactNode {
 	}, [errorMessage]);
 
 	return (
-		<div className={`flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url(${BackgroundLogin})] bg-cover bg-center bg-no-repeat p-8`}>
+		<div className="flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[url('/src/assets/images/background-login.jpg')] bg-cover bg-center bg-no-repeat p-8">
 			<div className="mx-5 rounded bg-blue-900/75 p-5 text-gray-100 landscape:my-10">
 				<h3 className="mb-11 text-center text-5xl font-bold">Inicio de sesión</h3>
 

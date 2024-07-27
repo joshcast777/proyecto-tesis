@@ -100,16 +100,17 @@ export default function AdminDashboard(): React.ReactNode {
 						})
 					)}
 					filterComponent={(table: Table<DoctorTable>) => (
-						<div className="flex items-center gap-5 py-4">
-							<Input placeholder="Filtrar cédula..." value={table.getColumn("dni")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("dni")?.setFilterValue(event.target.value)} className="max-w-40" />
+						<div className="mb-5 space-y-3 sm:flex sm:flex-wrap sm:items-center sm:gap-5 sm:space-y-0">
+							<Input placeholder="Filtrar cédula..." value={table.getColumn("dni")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("dni")?.setFilterValue(event.target.value)} className="w-full sm:w-5/12 lg:w-[200px]" />
 
-							<Input placeholder="Filtrar apellidos..." value={table.getColumn("fullName")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("fullName")?.setFilterValue(event.target.value)} className="max-w-72" />
+							<Input placeholder="Filtrar apellidos..." value={table.getColumn("fullName")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("fullName")?.setFilterValue(event.target.value)} className="w-full sm:w-5/12 lg:w-[300px]" />
 
-							<Input placeholder="Filtrar correo..." value={table.getColumn("email")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("email")?.setFilterValue(event.target.value)} className="max-w-72" />
+							<Input placeholder="Filtrar correo..." value={table.getColumn("email")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("email")?.setFilterValue(event.target.value)} className="w-full sm:w-5/12 lg:w-[300px]" />
 
 							<SelectLayout
 								placeholder="Seleccione estado..."
 								values={selectValues}
+								className="w-full sm:w-5/12 md:w-52"
 								defaultValue={table.getColumn("status")?.getFilterValue() as string}
 								onValueChange={(event: string) => {
 									if (event === "ALL") {
