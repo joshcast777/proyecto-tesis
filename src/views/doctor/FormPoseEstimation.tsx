@@ -304,7 +304,6 @@ export default function FormPoseEstimation(): React.ReactNode {
 						<Button
 							type="reset"
 							variant="outline"
-							disabled={poseEstimationValue.summary === "" || isSubmitted}
 							className="w-28 border-blue-700 text-blue-700 hover:bg-blue-50 hover:text-blue-700 lg:text-lg"
 							onClick={(): void => {
 								clearCurrentPatient();
@@ -319,10 +318,6 @@ export default function FormPoseEstimation(): React.ReactNode {
 						</Button>
 
 						{isSubmitted ? (
-							<Button type="button" disabled={poseEstimationValue.summary === ""} className="min-w-28 bg-blue-700 hover:bg-blue-800 lg:text-lg" onClick={handleClickSubmit}>
-								Guardar
-							</Button>
-						) : (
 							<Button
 								type="button"
 								className="min-w-28 bg-blue-700 hover:bg-blue-800 lg:text-lg"
@@ -334,23 +329,12 @@ export default function FormPoseEstimation(): React.ReactNode {
 							>
 								Finalizar
 							</Button>
+						) : (
+							<Button type="button" disabled={poseEstimationValue.estimatedImage.includes("no-image") || poseEstimationValue.summary === ""} className="min-w-28 bg-blue-700 hover:bg-blue-800 lg:text-lg" onClick={handleClickSubmit}>
+								Guardar
+							</Button>
 						)}
 					</div>
-
-					{/* <FormButtons
-						disabled={isSubmitted}
-						disabledSaveButton={poseEstimationValue.estimatedImage.includes("no-image") || poseEstimationValue.summary === ""}
-						resetButtonLabel="Cancelar"
-						resetFunction={(): void => {
-							clearCurrentPatient();
-							clearCurrentAppointment();
-						}}
-						saveFunction={handleClickSubmit}
-						saveButtonType="button"
-						resetRoute="/doctor/dashboard"
-						saveButtonLabel="Guardar"
-						waitingButtonLabel="Por favor, espere..."
-					/> */}
 				</div>
 			</div>
 		</div>

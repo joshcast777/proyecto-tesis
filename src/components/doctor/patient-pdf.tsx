@@ -86,6 +86,10 @@ const styles: Styles = StyleSheet.create({
 	summaryStyle: {
 		flexDirection: "column",
 		gap: "5px"
+	},
+	userImage: {
+		maxHeight: "700px",
+		maxWidth: "100%"
 	}
 });
 
@@ -221,7 +225,7 @@ function AppointmentView({ appointmentData: { date, nameDoctor, summary } }: App
 }
 
 export default function PatientPdf({ appointmentData, patientData }: PatientPdfProps): React.ReactNode {
-	const { page, title } = styles;
+	const { page, title, userImage } = styles;
 
 	return (
 		<Document>
@@ -245,7 +249,7 @@ export default function PatientPdf({ appointmentData, patientData }: PatientPdfP
 
 					<Separator />
 
-					<Image src={appointmentData.uploadedImageLink} />
+					<Image style={userImage} src={appointmentData.uploadedImageLink} />
 				</BoxView>
 			</Page>
 
@@ -255,7 +259,7 @@ export default function PatientPdf({ appointmentData, patientData }: PatientPdfP
 
 					<Separator />
 
-					<Image src={appointmentData.estimatedImageLink} />
+					<Image style={userImage} src={appointmentData.estimatedImageLink} />
 				</BoxView>
 			</Page>
 		</Document>
