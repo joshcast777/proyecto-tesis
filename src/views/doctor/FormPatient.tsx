@@ -188,16 +188,20 @@ export default function FormPatient(): React.ReactNode {
 			<div className="container rounded bg-blue-300/75 p-5 text-gray-900 lg:max-w-[1024px]">
 				<FormTitle>Información del paciente</FormTitle>
 
-				<PDFDownloadLink document={<PatientPdf patientData={dataPatient} appointmentData={dataAppointment} />} fileName={`paciente-${format(new Date(), "dd-MM-yyyy")}`} className="my-10 flex justify-end">
-					<Button
-						className={cn("w-full bg-purple-700 hover:bg-purple-800 sm:w-auto lg:text-lg", {
+				<div className="my-10 flex justify-end">
+					<PDFDownloadLink
+						document={<PatientPdf patientData={dataPatient} appointmentData={dataAppointment} />}
+						fileName={`paciente-${format(new Date(), "dd-MM-yyyy")}`}
+						className={cn({
 							hidden: idAppointment === "",
 							flex: idAppointment !== ""
 						})}
 					>
-						<FileText className="mr-3" /> Imprimir cita previa
-					</Button>
-				</PDFDownloadLink>
+						<Button className="w-full bg-purple-700 hover:bg-purple-800 sm:w-auto lg:text-lg">
+							<FileText className="mr-3" /> Imprimir cita previa
+						</Button>
+					</PDFDownloadLink>
+				</div>
 
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="mt-10">
@@ -411,19 +415,6 @@ export default function FormPatient(): React.ReactNode {
 								)}
 							/>
 						</div>
-
-						{/* <FormButtons
-							disabled={disabled}
-							resetButtonLabel="Cancelar"
-							resetFunction={form.reset}
-							resetRoute="/doctor/dashboard"
-							saveButtonLabel="Continuar"
-							waitingButtonLabel={
-								<>
-									<Loader2 className="mr-2 h-4 w-4 animate-spin" /> Por favor, espere...
-								</>
-							}
-						/> */}
 
 						{idParam === undefined ? (
 							<div className="mt-5 flex items-center justify-between sm:justify-end sm:gap-5">

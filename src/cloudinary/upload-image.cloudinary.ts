@@ -31,7 +31,7 @@ export async function cloudinaryUploadImages(filesInfo: ImagesBlob[], idPatient:
 					if (response.ok) {
 						return {
 							type: fileInfo.type,
-							downloadLink: data.url
+							downloadLink: data.secure_url
 						};
 					} else {
 						throw new Error(data.error.message);

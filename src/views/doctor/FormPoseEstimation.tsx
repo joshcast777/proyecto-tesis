@@ -282,12 +282,16 @@ export default function FormPoseEstimation(): React.ReactNode {
 				</div>
 
 				<div className="sm:flex sm:items-center sm:justify-between">
-					<PDFDownloadLink document={<PatientPdf patientData={currentPatient.data} appointmentData={currentAppointment.data} />} fileName={`paciente-${format(new Date(), "dd-MM-yyyy")}`} className="my-10 flex justify-end">
+					<PDFDownloadLink
+						document={<PatientPdf patientData={currentPatient.data} appointmentData={currentAppointment.data} />}
+						fileName={`paciente-${format(new Date(), "dd-MM-yyyy")}`}
+						className={cn({
+							flex: isSubmitted,
+							hidden: !isSubmitted
+						})}
+					>
 						<Button
-							className={cn("mt-5 w-full bg-purple-700 hover:bg-purple-800 sm:w-auto lg:text-lg", {
-								flex: isSubmitted,
-								hidden: !isSubmitted
-							})}
+							className="mt-5 w-full bg-purple-700 hover:bg-purple-800 sm:w-auto lg:text-lg"
 							onClick={(): void => {
 								setTimeout(() => {
 									navigate("/doctor/dashboard", {
