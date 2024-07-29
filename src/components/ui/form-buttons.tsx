@@ -52,9 +52,7 @@ export default function FormButtons({ disabled = false, disabledResetButton = fa
 				onClick={(): void => {
 					resetFunction();
 
-					navigate(resetRoute, {
-						replace: true
-					});
+					navigate(resetRoute);
 				}}
 				className="w-28 border-blue-700 text-blue-700 hover:bg-blue-50 hover:text-blue-700 lg:text-lg"
 			>

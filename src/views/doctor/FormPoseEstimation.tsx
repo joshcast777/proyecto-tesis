@@ -74,6 +74,7 @@ export default function FormPoseEstimation(): React.ReactNode {
 	const navigate: NavigateFunction = useNavigate();
 
 	const estimatePoseRequest = async (formData: FormData): Promise<void> => {
+		console.log("9");
 		const response: Response = await fetch(`${VITE_POSE_ESTIMATION_API}/estimate-pose`, {
 			method: "POST",
 			body: formData
@@ -102,6 +103,7 @@ export default function FormPoseEstimation(): React.ReactNode {
 	};
 
 	const handleEstimatePose = async (): Promise<void> => {
+		console.log("8");
 		enableLoading();
 
 		const response: Response = await fetch(poseEstimationValue.uploadedImage);
@@ -114,6 +116,9 @@ export default function FormPoseEstimation(): React.ReactNode {
 	};
 
 	const uploadImagesToCloud = async (): Promise<ImagesDownloadLink[]> => {
+		console.log("7");
+		console.log(poseEstimationValue);
+		debugger;
 		const responses: Response[] = await Promise.all([fetch(poseEstimationValue.uploadedImage), fetch(poseEstimationValue.estimatedImage)]);
 
 		const images: ImagesBlob[] = await Promise.all(
@@ -131,6 +136,7 @@ export default function FormPoseEstimation(): React.ReactNode {
 	};
 
 	const saveAppointmentData = async (downloadLinks: ImagesDownloadLink[]): Promise<boolean> => {
+		console.log("6");
 		const appointmentData: AppointmentData = {
 			date: new Date(),
 			idDoctor: localStorage.getItem(LocalStorageKeys.Id)!,
@@ -163,6 +169,7 @@ export default function FormPoseEstimation(): React.ReactNode {
 	};
 
 	const updatePatientData = async (): Promise<boolean> => {
+		console.log("5");
 		const newPatient: Patient = structuredClone({
 			id: currentPatient.id,
 			data: {
@@ -185,6 +192,7 @@ export default function FormPoseEstimation(): React.ReactNode {
 	};
 
 	const handleAngleChange = (event: React.ChangeEvent<HTMLInputElement>, angleKey: string): void => {
+		console.log("4");
 		const keys: string[] = angleKey.split("-");
 
 		setAngles(
@@ -198,6 +206,7 @@ export default function FormPoseEstimation(): React.ReactNode {
 	};
 
 	const handleClickSubmit = async (): Promise<void> => {
+		console.log("3");
 		enableLoading();
 
 		const downloadLinks: ImagesDownloadLink[] = await uploadImagesToCloud();
@@ -227,7 +236,8 @@ export default function FormPoseEstimation(): React.ReactNode {
 		});
 	};
 
-	useEffect((): (() => void) => {
+	useEffect((): void => {
+		console.log(currentPatient);
 		if (errorMessage !== "") {
 			showToast({
 				type: ToastTypes.Error,
@@ -237,12 +247,16 @@ export default function FormPoseEstimation(): React.ReactNode {
 				onDismissAndOnAutoCloseFunctions: clearErrorMessage
 			});
 		}
-
-		return (): void => {
-			clearCurrentPatient();
-			clearCurrentAppointment();
-		};
 	}, [errorMessage]);
+
+	useEffect((): (() => void) => {
+		return (): void => {
+			window.removeEventListener("beforeunload", () => {
+				clearCurrentPatient();
+				clearCurrentAppointment();
+			});
+		};
+	}, []);
 
 	if (isLoading) {
 		return <Loader />;
@@ -455,9 +469,10 @@ export default function FormPoseEstimation(): React.ReactNode {
 							className="mt-5 w-full bg-purple-700 hover:bg-purple-800 sm:w-auto lg:text-lg"
 							onClick={(): void => {
 								setTimeout(() => {
-									navigate("/doctor/dashboard", {
-										replace: true
-									});
+									clearCurrentPatient();
+									clearCurrentAppointment();
+
+									navigate("/doctor/dashboard");
 								}, 3000);
 							}}
 						>
@@ -474,9 +489,7 @@ export default function FormPoseEstimation(): React.ReactNode {
 								clearCurrentPatient();
 								clearCurrentAppointment();
 
-								navigate("/doctor/dashboard", {
-									replace: true
-								});
+								navigate("/doctor/dashboard");
 							}}
 						>
 							Volver
@@ -487,9 +500,10 @@ export default function FormPoseEstimation(): React.ReactNode {
 								type="button"
 								className="min-w-28 bg-blue-700 hover:bg-blue-800 lg:text-lg"
 								onClick={(): void => {
-									navigate("/doctor/dashboard", {
-										replace: true
-									});
+									clearCurrentPatient();
+									clearCurrentAppointment();
+
+									navigate("/doctor/dashboard");
 								}}
 							>
 								Finalizar

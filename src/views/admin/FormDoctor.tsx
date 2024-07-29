@@ -133,9 +133,7 @@ export default function FormDoctor(): React.ReactNode {
 		setIsSubmitted(true);
 
 		setTimeout((): void => {
-			navigate("/admin/dashboard", {
-				replace: true
-			});
+			navigate("/admin/dashboard");
 		}, 3000);
 
 		showToast({
@@ -418,9 +416,7 @@ export default function FormDoctor(): React.ReactNode {
 								onClick={(): void => {
 									form.reset();
 
-									navigate("/admin/dashboard", {
-										replace: true
-									});
+									navigate("/admin/dashboard");
 								}}
 							>
 								Volver

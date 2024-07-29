@@ -48,9 +48,7 @@ export default function Appointment(): React.ReactNode {
 						variant="outline"
 						className="w-full sm:w-auto"
 						onClick={(): void => {
-							navigate("/patient/dashboard", {
-								replace: true
-							});
+							navigate("/patient/dashboard");
 						}}
 					>
 						<ArrowLeft className="mr-3" /> Volver

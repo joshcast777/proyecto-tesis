@@ -7,7 +7,7 @@ import { Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 import { DefaultValues, ErrorMessages } from "@/constants";
 import { ToastIcons } from "@/constants/ui";
 import { sex } from "@/data";
-import { PatientFormFields, ToastTitles, ToastTypes } from "@/enums";
+import { LocalStorageKeys, PatientFormFields, ToastTitles, ToastTypes } from "@/enums";
 import { cn, showToast } from "@/lib";
 import { patientSchema } from "@/schemas";
 import { authStore, globalStore, patientStore } from "@/store";
@@ -45,9 +45,7 @@ export default function FormPatient(): React.ReactNode {
 
 	const onSubmit: SubmitHandler<PatientForm> = async (formData: PatientForm): Promise<void> => {
 		if (idParam !== undefined && !form.formState.isDirty) {
-			navigate(`/doctor/appointment/pose-estimation/${idParam}`, {
-				replace: true
-			});
+			navigate(`/doctor/appointment/pose-estimation/${idParam}`);
 
 			return;
 		}
@@ -56,6 +54,7 @@ export default function FormPatient(): React.ReactNode {
 
 		let response: string = "";
 
+		console.log(currentUser);
 		const newPatient: Patient = {
 			id: response,
 			data: {
@@ -65,7 +64,7 @@ export default function FormPatient(): React.ReactNode {
 				birthDate: Boolean(idParam) ? dataPatient.birthDate : parse(formData.birthDate, "dd/MM/yyyy", new Date()),
 				creationDate: Boolean(idParam) ? dataPatient.creationDate : new Date(),
 				nameDoctorCreation: Boolean(idParam) ? dataPatient.nameDoctorCreation : `${currentUser.data.firstName} ${currentUser.data.lastName}`,
-				idDoctorCreation: Boolean(idParam) ? dataPatient.idDoctorCreation : currentUser.id
+				idDoctorCreation: Boolean(idParam) ? dataPatient.idDoctorCreation : localStorage.getItem(LocalStorageKeys.Id)!
 			}
 		};
 
@@ -110,16 +109,15 @@ export default function FormPatient(): React.ReactNode {
 		setIsSubmitted(true);
 
 		setTimeout(() => {
-			navigate(`/doctor/appointment/pose-estimation/${idParam !== undefined ? idParam : newPatient.id}`, {
-				replace: true
-			});
+			navigate(`/doctor/appointment/pose-estimation/${idParam !== undefined ? idParam : newPatient.id}`);
 		}, 3000);
 
 		showToast({
 			type: ToastTypes.Success,
 			title: ToastTitles.Success,
-			message: "Paciente registrado, será redireccionado",
-			icon: ToastIcons.Success
+			message: "Paciente guardado, será redireccionado",
+			icon: ToastIcons.Success,
+			onDismissAndOnAutoCloseFunctions: clearErrorMessage
 		});
 	};
 
@@ -155,6 +153,7 @@ export default function FormPatient(): React.ReactNode {
 
 	useEffect((): void => {
 		if (idPatient !== "") {
+			console.log(dataPatient);
 			form.reset({
 				...dataPatient,
 				birthDate: format(dataPatient.birthDate, "dd/MM/yyyy")
@@ -423,9 +422,7 @@ export default function FormPatient(): React.ReactNode {
 									onClick={(): void => {
 										form.reset();
 
-										navigate("/doctor/dashboard", {
-											replace: true
-										});
+										navigate("/doctor/dashboard");
 									}}
 								>
 									Volver
@@ -443,23 +440,6 @@ export default function FormPatient(): React.ReactNode {
 
 								<LastAppointmentSummary />
 
-								{/* <FormButtons
-									disabled={disabled}
-									resetButtonLabel="Cancelar"
-									resetFunction={(): void => {
-										form.reset();
-										clearCurrentPatient();
-										clearCurrentAppointment();
-									}}
-									resetRoute="/doctor/dashboard"
-									saveButtonLabel="Continuar"
-									waitingButtonLabel={
-										<>
-											<Loader2 className="mr-2 h-4 w-4 animate-spin" /> Por favor, espere...
-										</>
-									}
-								/> */}
-
 								<div className="mt-5 flex items-center justify-between sm:justify-end sm:gap-5">
 									<Button
 										type="reset"
@@ -472,9 +452,8 @@ export default function FormPatient(): React.ReactNode {
 											clearCurrentPatient();
 											clearCurrentAppointment();
 
-											navigate("/doctor/dashboard", {
-												replace: true
-											});
+											console.log("/doctor/dashboard");
+											navigate("/doctor/dashboard");
 										}}
 									>
 										Volver
