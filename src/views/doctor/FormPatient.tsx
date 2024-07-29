@@ -52,7 +52,6 @@ export default function FormPatient(): React.ReactNode {
 			return;
 		}
 
-		// setDisabled(true);
 		enableLoading();
 
 		let response: string = "";
@@ -80,7 +79,6 @@ export default function FormPatient(): React.ReactNode {
 				setErrorMessage(response);
 
 				disableLoading();
-				// setDisabled(false);
 
 				return;
 			}
@@ -104,7 +102,6 @@ export default function FormPatient(): React.ReactNode {
 			setErrorMessage(response);
 
 			disableLoading();
-			// setDisabled(false);
 
 			return;
 		}

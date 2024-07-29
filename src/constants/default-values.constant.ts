@@ -1,8 +1,9 @@
 // Enums & Types
 import { Sex } from "@/enums";
-import { Appointment, AuthForm, Doctor, DoctorForm, Patient, PatientForm } from "@/types";
+import { Angles, Appointment, AuthForm, Doctor, DoctorForm, Patient, PatientForm } from "@/types";
 
 type DefaultValue = {
+	Angles: Angles;
 	Appointment: Appointment;
 	Doctor: Doctor;
 	DoctorForm: DoctorForm;
@@ -12,12 +13,40 @@ type DefaultValue = {
 };
 
 export const DefaultValues: DefaultValue = {
+	Angles: {
+		elbow: {
+			left: 0,
+			right: 0
+		},
+		shoulder: {
+			left: 0,
+			right: 0
+		},
+		wrist: {
+			left: 0,
+			right: 0
+		}
+	},
 	Appointment: {
 		id: "",
 		data: {
 			date: new Date(),
 			idDoctor: "",
 			nameDoctor: "",
+			angles: {
+				elbow: {
+					left: 0,
+					right: 0
+				},
+				shoulder: {
+					left: 0,
+					right: 0
+				},
+				wrist: {
+					left: 0,
+					right: 0
+				}
+			},
 			summary: "",
 			estimatedImageLink: "",
 			uploadedImageLink: ""

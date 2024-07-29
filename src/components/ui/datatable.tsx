@@ -42,9 +42,6 @@ export function DataTable<TData, TValue>({ columns, data, filterComponent }: Dat
 		initialState: {
 			columnVisibility: {
 				id: false
-				// },
-				// pagination: {
-				// 	pageSize: tableSize
 			},
 			sorting
 		},
@@ -103,52 +100,6 @@ export function DataTable<TData, TValue>({ columns, data, filterComponent }: Dat
 					</TableBody>
 				</Table>
 			</div>
-
-			{/* <div className="flex items-center justify-center space-x-5 py-4">
-				<Button
-					className="border-blue-700 text-blue-700 hover:bg-blue-50 disabled:border-blue-400 disabled:text-blue-400"
-					variant="outline"
-					size="icon"
-					onClick={async (): Promise<void> => {
-						// table.previousPage();
-						enableLoading();
-
-						setTablePage(tablePage - 1);
-
-						await getPatients("PREVIOUS");
-
-						disableLoading();
-					}}
-					// disabled={!table.getCanPreviousPage()}
-					disabled={tablePage === 1}
-				>
-					<ChevronLeft className="h-4 w-4" />
-				</Button>
-
-				<p>
-					<span className="font-semibold">Página: {tablePage}</span>
-				</p>
-
-				<Button
-					className="border-blue-700 text-blue-700 hover:bg-blue-50 disabled:border-blue-400 disabled:text-blue-400"
-					variant="outline"
-					size="icon"
-					onClick={async (): Promise<void> => {
-						// table.nextPage();
-						enableLoading();
-
-						setTablePage(tablePage + 1);
-
-						await getPatients();
-
-						disableLoading();
-					}}
-					// disabled={!table.getCanNextPage()}
-					disabled={patients.length < tableSize}
-				>
-					<ChevronRight className="h-4 w-4" />
-				</Button>
-			</div> */}
 		</>
 	);
 }

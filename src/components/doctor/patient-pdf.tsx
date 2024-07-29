@@ -1,6 +1,6 @@
 import { UgLogo } from "@/assets/images";
 import { Sex } from "@/enums";
-import { AppointmentData, PatientData } from "@/types";
+import { Angles, AppointmentData, PatientData } from "@/types";
 import { Document, Image, Page, Styles, StyleSheet, Text, View } from "@react-pdf/renderer";
 import { differenceInYears, format } from "date-fns";
 
@@ -90,6 +90,13 @@ const styles: Styles = StyleSheet.create({
 	userImage: {
 		maxHeight: "700px",
 		maxWidth: "100%"
+	},
+	jointAngles: {
+		flexDirection: "row",
+		gap: "5px"
+	},
+	jointAngle: {
+		width: "100%"
 	}
 });
 
@@ -100,6 +107,7 @@ type PatientPdfProps = {
 
 type BoxViewProps = {
 	children?: React.ReactNode;
+	title?: string;
 };
 
 type RowViewProps = {
@@ -109,7 +117,11 @@ type RowViewProps = {
 type DataViewProps = {
 	labelText: string;
 	value: string;
-	style: string;
+	style?: string;
+};
+
+type AnglesViewProps = {
+	angles: Angles;
 };
 
 type PatientDataProps = {
@@ -126,14 +138,22 @@ function Separator(): React.ReactNode {
 	return <View style={separator}></View>;
 }
 
-function BoxView({ children }: BoxViewProps): React.ReactNode {
+function BoxView({ children, title }: BoxViewProps): React.ReactNode {
 	const { boxView } = styles;
 
 	if (children === undefined) {
 		return <View style={boxView}></View>;
 	}
 
-	return <View style={boxView}>{children}</View>;
+	return (
+		<View style={boxView}>
+			<Text>{title}</Text>
+
+			<Separator />
+
+			{children}
+		</View>
+	);
 }
 
 function RowView({ children }: RowViewProps): React.ReactNode {
@@ -145,8 +165,14 @@ function RowView({ children }: RowViewProps): React.ReactNode {
 function DataView({ labelText, value, style }: DataViewProps): React.ReactNode {
 	const { data, dataView, label } = styles;
 
+	const stringValues = [dataView];
+
+	if (style !== undefined) {
+		stringValues.push(styles[style]);
+	}
+
 	return (
-		<View style={[dataView, styles[style]]}>
+		<View style={stringValues}>
 			<Text style={label}>{labelText}</Text>
 
 			<Text style={data}>{value}</Text>
@@ -206,11 +232,7 @@ function PatientView({ patientData: { birthDate, dni, firstName, lastName, locat
 
 function AppointmentView({ appointmentData: { date, nameDoctor, summary } }: AppointmentDataProps): React.ReactNode {
 	return (
-		<BoxView>
-			<Text>Datos de la Cita</Text>
-
-			<Separator />
-
+		<BoxView title="Datos de la Cita">
 			<View>
 				<RowView>
 					<DataView style="doctorNameStyle" labelText="Doctor:" value={nameDoctor} />
@@ -219,6 +241,40 @@ function AppointmentView({ appointmentData: { date, nameDoctor, summary } }: App
 				</RowView>
 
 				<DataView style="summaryStyle" labelText="Comentarios:" value={summary} />
+			</View>
+		</BoxView>
+	);
+}
+
+function AnglesView({ angles: { elbow, shoulder, wrist } }: AnglesViewProps): React.ReactNode {
+	const { jointAngle, jointAngles } = styles;
+
+	return (
+		<BoxView title="Ángulos">
+			<View style={jointAngles}>
+				<View style={jointAngle}>
+					<BoxView title="Hombro">
+						<DataView labelText="Derecho:" value={`${shoulder.right}°`} />
+
+						<DataView labelText="Izquierdo:" value={`${shoulder.left}°`} />
+					</BoxView>
+				</View>
+
+				<View style={jointAngle}>
+					<BoxView title="Codo">
+						<DataView labelText="Derecho:" value={`${elbow.right}°`} />
+
+						<DataView labelText="Izquierdo:" value={`${elbow.left}°`} />
+					</BoxView>
+				</View>
+
+				<View style={jointAngle}>
+					<BoxView title="Muñeca">
+						<DataView labelText="Derecho:" value={`${wrist.right}°`} />
+
+						<DataView labelText="Izquierdo:" value={`${wrist.left}°`} />
+					</BoxView>
+				</View>
 			</View>
 		</BoxView>
 	);
@@ -241,24 +297,18 @@ export default function PatientPdf({ appointmentData, patientData }: PatientPdfP
 				<BoxView />
 
 				<AppointmentView appointmentData={appointmentData} />
+
+				<AnglesView angles={appointmentData.angles} />
 			</Page>
 
 			<Page size="A4" style={page}>
-				<BoxView>
-					<Text>Imagen original</Text>
-
-					<Separator />
-
+				<BoxView title="Imagen original">
 					<Image style={userImage} src={appointmentData.uploadedImageLink} />
 				</BoxView>
 			</Page>
 
 			<Page size="A4" style={page}>
-				<BoxView>
-					<Text>Imagen con estimaciones</Text>
-
-					<Separator />
-
+				<BoxView title="Imagen con estimaciones">
 					<Image style={userImage} src={appointmentData.estimatedImageLink} />
 				</BoxView>
 			</Page>

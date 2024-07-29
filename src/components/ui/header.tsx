@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 
 // Components
-import { Button } from "@/components/ui";
+import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui";
 
 // Constants
 import { ToastIcons } from "@/constants/ui";
@@ -18,9 +18,10 @@ import { ToastTitles, ToastTypes } from "@/enums";
 
 import { UgLogo } from "@/assets/images";
 import { NavigateFunction, useNavigate } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 
 export function Header(): React.ReactNode {
-	const { clearIsAuthenticated, signOutUser } = authStore();
+	const { currentPatient, currentUser, clearIsAuthenticated, signOutUser } = authStore();
 	const { errorMessage, clearErrorMessage, clearLocalStorage, setErrorMessage } = globalStore();
 
 	const navigate: NavigateFunction = useNavigate();
@@ -59,7 +60,18 @@ export function Header(): React.ReactNode {
 			<div className="container flex h-20 items-center justify-between">
 				<img src={UgLogo} alt="UG Logo" className="h-full" />
 
-				<Button onClick={signOutSession}>Cerrar sesión</Button>
+				{/* <Button onClick={signOutSession}>Cerrar sesión</Button> */}
+				<DropdownMenu>
+					<DropdownMenuTrigger>
+						<Button className="text-lg" variant="link">
+							{currentUser.id === "" ? `${currentPatient.data.firstName} ${currentPatient.data.lastName}` : `${currentUser.data.firstName} ${currentUser.data.lastName}`} <ChevronDown />
+						</Button>
+					</DropdownMenuTrigger>
+
+					<DropdownMenuContent>
+						<DropdownMenuItem onClick={signOutSession}>Cerrar sesión</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
 			</div>
 		</header>
 	);
