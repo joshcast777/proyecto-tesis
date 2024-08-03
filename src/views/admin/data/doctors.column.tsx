@@ -37,7 +37,7 @@ export const columns: ColumnDef<DoctorTable>[] = [
 		header: ({ column }: HeaderContext<DoctorTable, unknown>): React.ReactNode => (
 			<Button
 				variant="ghost"
-				className="w-full text-center font-semibold"
+				className="w-full text-center font-semibold hover:bg-transparent"
 				onClick={(): void => {
 					column.toggleSorting(column.getIsSorted() === "asc");
 				}}
@@ -75,7 +75,7 @@ export const columns: ColumnDef<DoctorTable>[] = [
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
 			const status: boolean = row.getValue(DoctorTableFields.Status);
 
-			return status ? <CircleCheck className="mx-auto text-green-500" /> : <CircleX className="mx-auto text-red-500" />;
+			return <div className="mx-auto flex h-6 w-6 items-center justify-center rounded-full bg-white">{status ? <CircleCheck className="mx-auto text-green-500" /> : <CircleX className="mx-auto text-red-500" />}</div>;
 		}
 	},
 	{
@@ -83,7 +83,7 @@ export const columns: ColumnDef<DoctorTable>[] = [
 		header: ({ column }: HeaderContext<DoctorTable, unknown>): React.ReactNode => (
 			<Button
 				variant="ghost"
-				className="w-full text-center font-semibold"
+				className="w-full text-center font-semibold hover:bg-transparent"
 				onClick={(): void => {
 					column.toggleSorting(column.getIsSorted() === "asc");
 				}}

@@ -74,8 +74,7 @@ export default function FormPoseEstimation(): React.ReactNode {
 	const navigate: NavigateFunction = useNavigate();
 
 	const estimatePoseRequest = async (formData: FormData): Promise<void> => {
-		console.log("9");
-		const response: Response = await fetch(`${VITE_POSE_ESTIMATION_API}/estimate-pose`, {
+		const response: Response = await fetch(`${VITE_POSE_ESTIMATION_API}/estimate-pose-image`, {
 			method: "POST",
 			body: formData
 		});
@@ -84,7 +83,6 @@ export default function FormPoseEstimation(): React.ReactNode {
 			throw new Error("Error en la respuesta del servidor.");
 		}
 
-		// const estimatedImage: Blob = await response.blob();
 		const data: ImageData = await response.json();
 
 		setAngles(data.angles);
@@ -93,7 +91,6 @@ export default function FormPoseEstimation(): React.ReactNode {
 			(poseEstimation: PoseEstimationValue): PoseEstimationValue =>
 				createPoseEstimationValue({
 					...poseEstimation,
-					// estimatedImage: URL.createObjectURL(estimatedImage)
 					estimatedImage: `data:image/png;base64,${data.image}`
 				})
 		);
@@ -103,7 +100,6 @@ export default function FormPoseEstimation(): React.ReactNode {
 	};
 
 	const handleEstimatePose = async (): Promise<void> => {
-		console.log("8");
 		enableLoading();
 
 		const response: Response = await fetch(poseEstimationValue.uploadedImage);
@@ -116,9 +112,6 @@ export default function FormPoseEstimation(): React.ReactNode {
 	};
 
 	const uploadImagesToCloud = async (): Promise<ImagesDownloadLink[]> => {
-		console.log("7");
-		console.log(poseEstimationValue);
-		debugger;
 		const responses: Response[] = await Promise.all([fetch(poseEstimationValue.uploadedImage), fetch(poseEstimationValue.estimatedImage)]);
 
 		const images: ImagesBlob[] = await Promise.all(
@@ -136,7 +129,6 @@ export default function FormPoseEstimation(): React.ReactNode {
 	};
 
 	const saveAppointmentData = async (downloadLinks: ImagesDownloadLink[]): Promise<boolean> => {
-		console.log("6");
 		const appointmentData: AppointmentData = {
 			date: new Date(),
 			idDoctor: localStorage.getItem(LocalStorageKeys.Id)!,
@@ -169,7 +161,6 @@ export default function FormPoseEstimation(): React.ReactNode {
 	};
 
 	const updatePatientData = async (): Promise<boolean> => {
-		console.log("5");
 		const newPatient: Patient = structuredClone({
 			id: currentPatient.id,
 			data: {
@@ -192,7 +183,6 @@ export default function FormPoseEstimation(): React.ReactNode {
 	};
 
 	const handleAngleChange = (event: React.ChangeEvent<HTMLInputElement>, angleKey: string): void => {
-		console.log("4");
 		const keys: string[] = angleKey.split("-");
 
 		setAngles(
@@ -206,7 +196,6 @@ export default function FormPoseEstimation(): React.ReactNode {
 	};
 
 	const handleClickSubmit = async (): Promise<void> => {
-		console.log("3");
 		enableLoading();
 
 		const downloadLinks: ImagesDownloadLink[] = await uploadImagesToCloud();
@@ -237,7 +226,6 @@ export default function FormPoseEstimation(): React.ReactNode {
 	};
 
 	useEffect((): void => {
-		console.log(currentPatient);
 		if (errorMessage !== "") {
 			showToast({
 				type: ToastTypes.Error,

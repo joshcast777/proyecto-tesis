@@ -133,7 +133,8 @@
 			"px",
 			"rem",
 			"ms",
-			"s"
+			"s",
+			"vh"
 		],
 		"function-disallowed-list": [
 			"hsl",

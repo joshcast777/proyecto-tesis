@@ -56,11 +56,10 @@ export function Header(): React.ReactNode {
 	}, [errorMessage]);
 
 	return (
-		<header className="py-3 shadow-md">
+		<header className="bg-blue-200 py-3 shadow-lg">
 			<div className="container flex h-20 items-center justify-between">
 				<img src={UgLogo} alt="UG Logo" className="h-full" />
 
-				{/* <Button onClick={signOutSession}>Cerrar sesión</Button> */}
 				<DropdownMenu>
 					<DropdownMenuTrigger>
 						<Button className="text-lg" variant="link">

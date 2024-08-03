@@ -1,7 +1,7 @@
-import { Aperture, ImageMinus, ImageUp, SendHorizontal } from "lucide-react";
+import { Aperture, ImageMinus, ImageUp, SendHorizontal, SwitchCamera } from "lucide-react";
 import { Button, DialogLayout } from "../ui";
 import { Camera, CameraType } from "react-camera-pro";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 
 type ImageButtonsProps = {
 	disabledRemoveButton?: boolean;
@@ -12,6 +12,8 @@ type ImageButtonsProps = {
 };
 
 export default function ImageButtons({ disabledRemoveButton = false, disabledSendButton = false, uploadImage, removeImageFunction, sendButtonFunction }: ImageButtonsProps): React.ReactNode {
+	const [numberOfCameras, setNumberOfCameras] = useState<number>(0);
+
 	const cameraRef = useRef<CameraType>(null);
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -65,6 +67,8 @@ export default function ImageButtons({ disabledRemoveButton = false, disabledSen
 						<Camera
 							ref={cameraRef}
 							aspectRatio={9 / 14}
+							numberOfCamerasCallback={setNumberOfCameras}
+							facingMode="environment"
 							errorMessages={{
 								noCameraAccessible: "No camera device accessible. Please connect your camera or try a different browser.",
 								permissionDenied: "Permission denied. Please refresh and give camera permission.",
@@ -72,6 +76,16 @@ export default function ImageButtons({ disabledRemoveButton = false, disabledSen
 								canvas: "Canvas is not supported."
 							}}
 						/>
+
+						<Button
+							hidden={numberOfCameras <= 1}
+							className="mt-3 w-full gap-3 bg-blue-700 hover:bg-blue-800"
+							onClick={(): void => {
+								cameraRef.current?.switchCamera();
+							}}
+						>
+							<SwitchCamera /> Cambiar cámara
+						</Button>
 					</div>
 				}
 				triggerContent={

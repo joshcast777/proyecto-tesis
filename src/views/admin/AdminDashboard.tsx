@@ -18,6 +18,7 @@ import { Table } from "@tanstack/react-table";
 import { columns } from "./data";
 
 // Libraries
+import { DashboardLayout, TableLayout } from "@/layouts";
 import { format } from "date-fns";
 
 const selectValues: SelectValues[][] = [
@@ -81,51 +82,53 @@ export default function AdminDashboard(): React.ReactNode {
 		<>
 			<Header />
 
-			<h2 className="container mt-16 text-center text-5xl">Lista de doctores</h2>
+			<DashboardLayout>
+				<h2 className="container mt-16 text-center text-5xl">Lista de doctores</h2>
 
-			<NewRecordButton newButtonLabel="Agregar doctor" newButtonClick={handleClickNew} />
+				<NewRecordButton newButtonLabel="Agregar doctor" newButtonClick={handleClickNew} />
 
-			<div className="container mb-10 mt-5">
-				<DataTable
-					columns={columns}
-					data={doctors.map(
-						({ id, data }: Doctor, index: number): DoctorTable => ({
-							...data,
-							id,
-							index: index + 1,
-							fullName: `${data.firstName} ${data.lastName}`,
-							status: data.status,
-							updateDate: format(data.updateDate, "dd-MM-yyyy"),
-							actions: <></>
-						})
-					)}
-					filterComponent={(table: Table<DoctorTable>) => (
-						<div className="mb-5 space-y-3 sm:flex sm:flex-wrap sm:items-center sm:gap-5 sm:space-y-0">
-							<Input placeholder="Filtrar cédula..." value={table.getColumn("dni")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("dni")?.setFilterValue(event.target.value)} className="w-full sm:w-5/12 lg:w-[200px]" />
+				<TableLayout>
+					<DataTable
+						columns={columns}
+						data={doctors.map(
+							({ id, data }: Doctor, index: number): DoctorTable => ({
+								...data,
+								id,
+								index: index + 1,
+								fullName: `${data.firstName} ${data.lastName}`,
+								status: data.status,
+								updateDate: format(data.updateDate, "dd-MM-yyyy"),
+								actions: <></>
+							})
+						)}
+						filterComponent={(table: Table<DoctorTable>) => (
+							<div className="mb-5 space-y-3 sm:flex sm:flex-wrap sm:items-center sm:gap-5 sm:space-y-0">
+								<Input placeholder="Filtrar cédula..." value={table.getColumn("dni")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("dni")?.setFilterValue(event.target.value)} className="w-full sm:w-5/12 lg:w-[200px]" />
 
-							<Input placeholder="Filtrar apellidos..." value={table.getColumn("fullName")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("fullName")?.setFilterValue(event.target.value)} className="w-full sm:w-5/12 lg:w-[300px]" />
+								<Input placeholder="Filtrar apellidos..." value={table.getColumn("fullName")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("fullName")?.setFilterValue(event.target.value)} className="w-full sm:w-5/12 lg:w-[300px]" />
 
-							<Input placeholder="Filtrar correo..." value={table.getColumn("email")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("email")?.setFilterValue(event.target.value)} className="w-full sm:w-5/12 lg:w-[300px]" />
+								<Input placeholder="Filtrar correo..." value={table.getColumn("email")?.getFilterValue() as string} onChange={(event: React.ChangeEvent<HTMLInputElement>): void | undefined => table.getColumn("email")?.setFilterValue(event.target.value)} className="w-full sm:w-5/12 lg:w-[300px]" />
 
-							<SelectLayout
-								placeholder="Seleccione estado..."
-								values={selectValues}
-								className="w-full sm:w-5/12 md:w-52"
-								defaultValue={table.getColumn("status")?.getFilterValue() as string}
-								onValueChange={(event: string) => {
-									if (event === "ALL") {
-										table.getColumn("status")?.setFilterValue(undefined);
+								<SelectLayout
+									placeholder="Seleccione estado..."
+									values={selectValues}
+									className="w-full sm:w-5/12 md:w-52"
+									defaultValue={table.getColumn("status")?.getFilterValue() as string}
+									onValueChange={(event: string) => {
+										if (event === "ALL") {
+											table.getColumn("status")?.setFilterValue(undefined);
 
-										return;
-									}
+											return;
+										}
 
-									table.getColumn("status")?.setFilterValue(event === "A");
-								}}
-							/>
-						</div>
-					)}
-				/>
-			</div>
+										table.getColumn("status")?.setFilterValue(event === "A");
+									}}
+								/>
+							</div>
+						)}
+					/>
+				</TableLayout>
+			</DashboardLayout>
 		</>
 	);
 }

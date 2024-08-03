@@ -1,5 +1,6 @@
 import { SelectValues } from "@/types";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./select";
+import { cn } from "@/lib";
 
 type SelectLayoutProps = {
 	className?: string;
@@ -12,7 +13,7 @@ type SelectLayoutProps = {
 export default function SelectLayout({ className, defaultValue, placeholder, values, onValueChange }: SelectLayoutProps): React.ReactNode {
 	return (
 		<Select defaultValue={defaultValue} onValueChange={onValueChange}>
-			<SelectTrigger className={className !== undefined ? className : ""}>
+			<SelectTrigger className={cn("text-muted-foreground", className !== undefined ? className : "")}>
 				<SelectValue placeholder={placeholder} />
 			</SelectTrigger>
 

@@ -41,7 +41,7 @@ export const columns: ColumnDef<PatientTable>[] = [
 		header: ({ column }: HeaderContext<PatientTable, unknown>): React.ReactNode => (
 			<Button
 				variant="ghost"
-				className="w-full text-center font-semibold"
+				className="w-full text-center font-semibold hover:bg-transparent"
 				onClick={(): void => {
 					column.toggleSorting(column.getIsSorted() === "asc");
 				}}
@@ -60,7 +60,7 @@ export const columns: ColumnDef<PatientTable>[] = [
 		header: ({ column }: HeaderContext<PatientTable, unknown>): React.ReactNode => (
 			<Button
 				variant="ghost"
-				className="w-full text-center font-semibold"
+				className="w-full text-center font-semibold hover:bg-transparent"
 				onClick={(): void => {
 					column.toggleSorting(column.getIsSorted() === "asc");
 				}}
@@ -82,12 +82,14 @@ export const columns: ColumnDef<PatientTable>[] = [
 			const sex: Sex = row.getValue("sex");
 
 			return (
-				<CircleUserRound
-					className={cn("mx-auto h-4 w-4", {
-						"text-blue-500": sex === Sex.Male,
-						"text-pink-500": sex === Sex.Female
-					})}
-				/>
+				<div className="mx-auto flex h-6 w-6 items-center justify-center rounded-full bg-gray-300">
+					<CircleUserRound
+						className={cn("h-4 w-4", {
+							"text-blue-500": sex === Sex.Male,
+							"text-pink-500": sex === Sex.Female
+						})}
+					/>
+				</div>
 			);
 		}
 	},
@@ -96,7 +98,7 @@ export const columns: ColumnDef<PatientTable>[] = [
 		header: ({ column }: HeaderContext<PatientTable, unknown>): React.ReactNode => (
 			<Button
 				variant="ghost"
-				className="w-full text-center font-semibold"
+				className="w-full text-center font-semibold hover:bg-transparent"
 				onClick={(): void => {
 					column.toggleSorting(column.getIsSorted() === "asc");
 				}}
@@ -122,7 +124,7 @@ export const columns: ColumnDef<PatientTable>[] = [
 				<div className="flex items-center justify-center gap-2">
 					<Button
 						size="icon"
-						className="bg-blue-500 hover:bg-blue-400"
+						className="bg-blue-700 hover:bg-blue-600"
 						onClick={(): void => {
 							navigate(`/doctor/appointment/form/${id}`);
 						}}

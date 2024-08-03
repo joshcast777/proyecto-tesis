@@ -30,7 +30,7 @@ export const columns: ColumnDef<AppointmentTable>[] = [
 		header: ({ column }: HeaderContext<AppointmentTable, unknown>): React.ReactNode => (
 			<Button
 				variant="ghost"
-				className="w-full text-center font-semibold"
+				className="w-full text-center font-semibold hover:bg-transparent"
 				onClick={(): void => {
 					column.toggleSorting(column.getIsSorted() === "asc");
 				}}
@@ -49,7 +49,7 @@ export const columns: ColumnDef<AppointmentTable>[] = [
 		header: ({ column }: HeaderContext<AppointmentTable, unknown>): React.ReactNode => (
 			<Button
 				variant="ghost"
-				className="w-full text-center font-semibold"
+				className="w-full text-center font-semibold hover:bg-transparent"
 				onClick={(): void => {
 					column.toggleSorting(column.getIsSorted() === "asc");
 				}}
@@ -75,7 +75,7 @@ export const columns: ColumnDef<AppointmentTable>[] = [
 				<div className="flex items-center justify-center gap-2">
 					<Button
 						size="icon"
-						className="bg-blue-500 hover:bg-blue-400"
+						className="bg-blue-700 hover:bg-blue-600"
 						onClick={(): void => {
 							navigate(`/patient/appointment/${id}`);
 						}}

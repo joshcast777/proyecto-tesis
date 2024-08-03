@@ -3,6 +3,7 @@ import { columns } from "./data";
 import { globalStore, patientStore } from "@/store";
 import { useEffect } from "react";
 import { Appointment, AppointmentTable } from "@/types";
+import { DashboardLayout, TableLayout } from "@/layouts";
 
 export default function PatientDashboard(): React.ReactNode {
 	const { isLoading, disableLoading, enableLoading } = globalStore();
@@ -32,23 +33,25 @@ export default function PatientDashboard(): React.ReactNode {
 		<>
 			<Header />
 
-			<h2 className="container mt-16 text-center text-5xl">Lista de pacientes</h2>
+			<DashboardLayout>
+				<h2 className="container mt-16 text-center text-5xl">Lista de consultas</h2>
 
-			<div className="container mb-10 mt-16">
-				<DataTable
-					columns={columns}
-					data={appointments.map(
-						(appointment: Appointment, index: number): AppointmentTable => ({
-							...appointment.data,
-							id: appointment.id,
-							index: tablePage * tableSize - (tableSize - 1) + index,
-							nameDoctor: appointment.data.nameDoctor,
-							date: appointment.data.date,
-							actions: <></>
-						})
-					)}
-				/>
-			</div>
+				<TableLayout>
+					<DataTable
+						columns={columns}
+						data={appointments.map(
+							(appointment: Appointment, index: number): AppointmentTable => ({
+								...appointment.data,
+								id: appointment.id,
+								index: tablePage * tableSize - (tableSize - 1) + index,
+								nameDoctor: appointment.data.nameDoctor,
+								date: appointment.data.date,
+								actions: <></>
+							})
+						)}
+					/>
+				</TableLayout>
+			</DashboardLayout>
 		</>
 	);
 }
