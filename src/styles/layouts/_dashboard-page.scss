@@ -1,4 +1,6 @@
 .dashboard-background {
 	min-height: calc(100vh - 104px);
-	background: linear-gradient(rgb(33 116 224 / 0.9), rgb(13 101 122 / 0.9)), url("/src/assets/images/dashboard-background.jpg") no-repeat center center/cover;
+	background:
+		linear-gradient(rgba(218 33 224 / 0.6), rgba(33 116 224 / 0.75)),
+		url("/src/assets/images/dashboard-background.jpg") no-repeat center center/cover;
 }

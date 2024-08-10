@@ -12,7 +12,7 @@ import { NavigateFunction, useNavigate } from "react-router-dom";
 export const columns: ColumnDef<DoctorTable>[] = [
 	{
 		accessorKey: DoctorTableFields.Index,
-		header: (): React.ReactNode => <div className="text-center">{DoctorTableHeader.Index}</div>,
+		header: (): React.ReactNode => <div className="text-center font-semibold text-white">{DoctorTableHeader.Index}</div>,
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
 			const index: number = parseInt(row.getValue(DoctorTableFields.Index));
 
@@ -25,7 +25,7 @@ export const columns: ColumnDef<DoctorTable>[] = [
 	},
 	{
 		accessorKey: DoctorTableFields.Dni,
-		header: (): React.ReactNode => <div className="text-center">{DoctorTableHeader.Dni}</div>,
+		header: (): React.ReactNode => <div className="text-center font-semibold text-white">{DoctorTableHeader.Dni}</div>,
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
 			const dni: string = row.getValue(DoctorTableFields.Dni);
 
@@ -37,7 +37,7 @@ export const columns: ColumnDef<DoctorTable>[] = [
 		header: ({ column }: HeaderContext<DoctorTable, unknown>): React.ReactNode => (
 			<Button
 				variant="ghost"
-				className="w-full text-center font-semibold hover:bg-transparent"
+				className="w-full text-center font-semibold text-white hover:bg-gray-100/20 hover:text-white"
 				onClick={(): void => {
 					column.toggleSorting(column.getIsSorted() === "asc");
 				}}
@@ -53,7 +53,7 @@ export const columns: ColumnDef<DoctorTable>[] = [
 	},
 	{
 		accessorKey: DoctorTableFields.Phone,
-		header: (): React.ReactNode => <div className="text-center">{DoctorTableHeader.Phone}</div>,
+		header: (): React.ReactNode => <div className="text-center font-semibold text-white">{DoctorTableHeader.Phone}</div>,
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
 			const phone: string = row.getValue(DoctorTableFields.Phone);
 
@@ -62,7 +62,7 @@ export const columns: ColumnDef<DoctorTable>[] = [
 	},
 	{
 		accessorKey: DoctorTableFields.Email,
-		header: (): React.ReactNode => <div className="text-center">{DoctorTableHeader.Email}</div>,
+		header: (): React.ReactNode => <div className="text-center font-semibold text-white">{DoctorTableHeader.Email}</div>,
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
 			const email: string = row.getValue(DoctorTableFields.Email);
 
@@ -71,7 +71,7 @@ export const columns: ColumnDef<DoctorTable>[] = [
 	},
 	{
 		accessorKey: DoctorTableFields.Status,
-		header: (): React.ReactNode => <div className="text-center">{DoctorTableHeader.Status}</div>,
+		header: (): React.ReactNode => <div className="text-center font-semibold text-white">{DoctorTableHeader.Status}</div>,
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
 			const status: boolean = row.getValue(DoctorTableFields.Status);
 
@@ -83,7 +83,7 @@ export const columns: ColumnDef<DoctorTable>[] = [
 		header: ({ column }: HeaderContext<DoctorTable, unknown>): React.ReactNode => (
 			<Button
 				variant="ghost"
-				className="w-full text-center font-semibold hover:bg-transparent"
+				className="w-full text-center font-semibold text-white hover:bg-gray-100/20 hover:text-white"
 				onClick={(): void => {
 					column.toggleSorting(column.getIsSorted() === "asc");
 				}}
@@ -99,7 +99,7 @@ export const columns: ColumnDef<DoctorTable>[] = [
 	},
 	{
 		accessorKey: "actions",
-		header: () => <div className="text-center">{DoctorTableHeader.Actions}</div>,
+		header: () => <div className="text-center font-semibold text-white">{DoctorTableHeader.Actions}</div>,
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
 			const { deleteDoctor, getDoctors } = doctorStore();
 			const { errorMessage, clearErrorMessage, disableLoading, enableLoading, setErrorMessage } = globalStore();

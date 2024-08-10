@@ -2,15 +2,10 @@ import { LocalStorageKeys } from "@/enums";
 import { patientStore } from "@/store";
 import { DoctorDashboard } from "@/views";
 import { FormPatient, FormPoseEstimation } from "@/views/doctor";
-import { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 export default function DoctorRoutes(): React.ReactNode {
 	const { currentPatient } = patientStore();
-
-	useEffect(() => {
-		console.log(currentPatient);
-	}, [currentPatient.id]);
 
 	return (
 		<Routes>

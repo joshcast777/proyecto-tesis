@@ -30,7 +30,7 @@ export const columns: ColumnDef<AppointmentTable>[] = [
 		header: ({ column }: HeaderContext<AppointmentTable, unknown>): React.ReactNode => (
 			<Button
 				variant="ghost"
-				className="w-full text-center font-semibold hover:bg-transparent"
+				className="w-full text-center font-semibold text-white hover:bg-gray-100/20 hover:text-white"
 				onClick={(): void => {
 					column.toggleSorting(column.getIsSorted() === "asc");
 				}}
@@ -49,7 +49,7 @@ export const columns: ColumnDef<AppointmentTable>[] = [
 		header: ({ column }: HeaderContext<AppointmentTable, unknown>): React.ReactNode => (
 			<Button
 				variant="ghost"
-				className="w-full text-center font-semibold hover:bg-transparent"
+				className="w-full text-center font-semibold text-white hover:bg-gray-100/20 hover:text-white"
 				onClick={(): void => {
 					column.toggleSorting(column.getIsSorted() === "asc");
 				}}

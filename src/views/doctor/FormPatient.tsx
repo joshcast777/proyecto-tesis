@@ -54,7 +54,6 @@ export default function FormPatient(): React.ReactNode {
 
 		let response: string = "";
 
-		console.log(currentUser);
 		const newPatient: Patient = {
 			id: response,
 			data: {
@@ -153,7 +152,6 @@ export default function FormPatient(): React.ReactNode {
 
 	useEffect((): void => {
 		if (idPatient !== "") {
-			console.log(dataPatient);
 			form.reset({
 				...dataPatient,
 				birthDate: format(dataPatient.birthDate, "dd/MM/yyyy")
@@ -452,7 +450,6 @@ export default function FormPatient(): React.ReactNode {
 											clearCurrentPatient();
 											clearCurrentAppointment();
 
-											console.log("/doctor/dashboard");
 											navigate("/doctor/dashboard");
 										}}
 									>
