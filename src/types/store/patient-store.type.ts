@@ -24,5 +24,5 @@ export type PatientStore = {
 	savePatient: (newPatient: Patient) => Promise<string>;
 	setTablePage: (page: number) => void;
 	setTableSize: (size: number) => void;
-	uploadImages: (images: ImagesBlob[]) => Promise<ImagesDownloadLink[]>;
+	uploadImages: (images: ImagesBlob[], type: string) => Promise<ImagesDownloadLink[]>;
 };

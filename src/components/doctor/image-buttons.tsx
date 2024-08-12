@@ -1,7 +1,7 @@
-import { Aperture, ImageMinus, ImageUp, SendHorizontal, SwitchCamera } from "lucide-react";
+import { Aperture, Camera, ImageMinus, ImageUp, SendHorizontal } from "lucide-react";
 import { Button, DialogLayout } from "../ui";
-import { Camera, CameraType } from "react-camera-pro";
-import React, { useRef, useState } from "react";
+import Webcam from "react-webcam";
+import { useCallback, useRef } from "react";
 
 type ImageButtonsProps = {
 	disabledRemoveButton?: boolean;
@@ -12,9 +12,7 @@ type ImageButtonsProps = {
 };
 
 export default function ImageButtons({ disabledRemoveButton = false, disabledSendButton = false, uploadImage, removeImageFunction, sendButtonFunction }: ImageButtonsProps): React.ReactNode {
-	const [numberOfCameras, setNumberOfCameras] = useState<number>(0);
-
-	const cameraRef = useRef<CameraType>(null);
+	const webcamRef = useRef<Webcam>(null);
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -41,72 +39,42 @@ export default function ImageButtons({ disabledRemoveButton = false, disabledSen
 		removeImageFunction();
 	};
 
-	const handleTakeShoot = async (): Promise<void> => {
-		uploadImage(cameraRef.current?.takePhoto() as string);
-	};
+	const handleTakeShoot = useCallback(() => {
+		uploadImage(webcamRef.current?.getScreenshot() as string);
+	}, [webcamRef]);
 
 	const handleSendImage = (): void => {
 		sendButtonFunction();
 	};
 
 	return (
-		<div className="mt-5 flex justify-between gap-5">
-			<Button className="h-16 w-full shrink bg-red-800 hover:bg-red-900" onClick={handleRemoveFile} disabled={disabledRemoveButton}>
-				<ImageMinus />
+		<div className="mt-5 space-y-3 sm:flex sm:justify-between sm:gap-5 sm:space-y-0">
+			<Button className="w-full shrink bg-red-800 hover:bg-red-900" onClick={handleRemoveFile} disabled={disabledRemoveButton}>
+				<span className="mr-3 sm:hidden lg:inline">Eliminar imagen</span> <ImageMinus />
 			</Button>
 
 			<input className="hidden" type="file" accept="image/*" onChange={handleFileChange} ref={fileInputRef} />
 
-			<Button className="h-16 w-full shrink bg-purple-800 hover:bg-purple-900" onClick={handleUploadFile}>
-				<ImageUp />
+			<Button className="w-full shrink bg-purple-800 hover:bg-purple-900" onClick={handleUploadFile}>
+				<span className="mr-3 sm:hidden lg:inline">Subir imagen</span> <ImageUp />
 			</Button>
 
 			<DialogLayout
-				content={
-					<div>
-						<Camera
-							ref={cameraRef}
-							aspectRatio={9 / 14}
-							numberOfCamerasCallback={setNumberOfCameras}
-							facingMode="environment"
-							errorMessages={{
-								noCameraAccessible: "No camera device accessible. Please connect your camera or try a different browser.",
-								permissionDenied: "Permission denied. Please refresh and give camera permission.",
-								switchCamera: "It is not possible to switch camera to different one because there is only one video device accessible.",
-								canvas: "Canvas is not supported."
-							}}
-						/>
-
-						<Button
-							hidden={numberOfCameras <= 1}
-							className="mt-3 w-full gap-3 bg-blue-700 hover:bg-blue-800"
-							onClick={(): void => {
-								cameraRef.current?.switchCamera();
-							}}
-						>
-							<SwitchCamera /> Cambiar cámara
-						</Button>
-					</div>
-				}
+				content={<Webcam forceScreenshotSourceSize={true} audio={false} height={720} width={1280} ref={webcamRef} screenshotFormat="image/jpeg" />}
 				triggerContent={
-					<Button className="h-16 w-full shrink bg-blue-700 hover:bg-blue-800">
-						<Aperture />
+					<Button className="w-full shrink bg-blue-700 hover:bg-blue-800">
+						<span className="mr-3 sm:hidden lg:inline">Usar cámara</span> <Camera />
 					</Button>
 				}
 				dialogCloseContent={
-					<Button
-						className="w-full gap-3"
-						onClick={async (): Promise<void> => {
-							await handleTakeShoot();
-						}}
-					>
+					<Button className="w-full gap-3" onClick={handleTakeShoot}>
 						<Aperture /> Tomar foto
 					</Button>
 				}
 			/>
 
-			<Button className="h-16 w-full shrink bg-green-800 hover:bg-green-900" onClick={handleSendImage} disabled={disabledSendButton}>
-				<SendHorizontal />
+			<Button className="w-full shrink bg-green-800 hover:bg-green-900" onClick={handleSendImage} disabled={disabledSendButton}>
+				<span className="mr-3 sm:hidden lg:inline">Enviar imagen</span> <SendHorizontal />
 			</Button>
 		</div>
 	);

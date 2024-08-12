@@ -3,12 +3,4 @@ export type Angles = {
 		right: number;
 		left: number;
 	};
-	shoulder: {
-		right: number;
-		left: number;
-	};
-	wrist: {
-		right: number;
-		left: number;
-	};
 };

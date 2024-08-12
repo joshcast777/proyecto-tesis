@@ -7,7 +7,7 @@ import { format } from "date-fns";
 
 const { VITE_CLOUDINARY_CLOUD_NAME, VITE_CLOUDINARY_UPLOAD_PRESSET } = import.meta.env;
 
-export async function cloudinaryUploadImages(filesInfo: ImagesBlob[], idPatient: string): Promise<ApiResponse<ImagesDownloadLink[]>> {
+export async function cloudinaryUploadImages(filesInfo: ImagesBlob[], idPatient: string, type: string): Promise<ApiResponse<ImagesDownloadLink[]>> {
 	try {
 		const currentDate: Date = new Date();
 
@@ -21,7 +21,7 @@ export async function cloudinaryUploadImages(filesInfo: ImagesBlob[], idPatient:
 				formData.append("public_id", fileInfo.type === "U" ? "uploaded" : "estimated");
 
 				try {
-					const response = await fetch(`https://api.cloudinary.com/v1_1/${VITE_CLOUDINARY_CLOUD_NAME}/image/upload`, {
+					const response = await fetch(`https://api.cloudinary.com/v1_1/${VITE_CLOUDINARY_CLOUD_NAME}/${type}/upload`, {
 						method: "POST",
 						body: formData
 					});

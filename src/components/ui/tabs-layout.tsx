@@ -17,11 +17,13 @@ export default function TabsLayout({ defaultValue, tabs }: TabsLayoutProps): Rea
 	}
 
 	return (
-		<Tabs defaultValue={defaultValue} className="w-full">
-			<TabsList>
+		<Tabs defaultValue={defaultValue}>
+			<TabsList className="mt-5 w-full">
 				{tabs.map(
 					({ value, tabTrigger }: Tab): JSX.Element => (
-						<TabsTrigger value={value}>{tabTrigger}</TabsTrigger>
+						<TabsTrigger value={value} className="w-1/2">
+							{tabTrigger}
+						</TabsTrigger>
 					)
 				)}
 			</TabsList>

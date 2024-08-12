@@ -57,3 +57,10 @@ export type DoctorTable = {
 	updateDate: string;
 	actions: React.ReactNode;
 };
+
+export type PoseEstimationValue = {
+	uploadedImage: string;
+	estimatedImage: string;
+	summary: string;
+	isValid: () => boolean;
+};

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui";
 import { ToastIcons } from "@/constants/ui";
 import { DoctorTableFields, DoctorTableHeader, ToastTitles, ToastTypes } from "@/enums";
-import { cn, showToast } from "@/lib";
+import { showToast } from "@/lib";
 import { doctorStore, globalStore } from "@/store";
 import { DoctorTable } from "@/types";
 import { CellContext, ColumnDef, HeaderContext } from "@tanstack/react-table";
@@ -101,7 +101,7 @@ export const columns: ColumnDef<DoctorTable>[] = [
 		accessorKey: "actions",
 		header: () => <div className="text-center font-semibold text-white">{DoctorTableHeader.Actions}</div>,
 		cell: ({ row }: CellContext<DoctorTable, unknown>): React.ReactNode => {
-			const { deleteDoctor, getDoctors } = doctorStore();
+			const { deleteDoctor, restoreDoctor, getDoctors } = doctorStore();
 			const { errorMessage, clearErrorMessage, disableLoading, enableLoading, setErrorMessage } = globalStore();
 
 			const navigate: NavigateFunction = useNavigate();
@@ -113,6 +113,23 @@ export const columns: ColumnDef<DoctorTable>[] = [
 				enableLoading();
 
 				const response: string = await deleteDoctor(id.toString());
+
+				if (response !== "") {
+					setErrorMessage(response);
+					disableLoading();
+
+					return;
+				}
+
+				getDoctors();
+
+				disableLoading();
+			};
+
+			const onRestoreDoctor = async (): Promise<void> => {
+				enableLoading();
+
+				const response: string = await restoreDoctor(id.toString());
 
 				if (response !== "") {
 					setErrorMessage(response);
@@ -150,16 +167,15 @@ export const columns: ColumnDef<DoctorTable>[] = [
 						<Pencil className="h-4 w-4" />
 					</Button>
 
-					<Button
-						size="icon"
-						className={cn({
-							"bg-red-500 hover:bg-red-400": status,
-							"bg-green-500 hover:bg-green-400": !status
-						})}
-						onClick={onDeleteDoctor}
-					>
-						{status ? <Trash2 className="h-4 w-4" /> : <ArchiveRestore className="h-4 w-4" />}
-					</Button>
+					{status ? (
+						<Button size="icon" className="bg-red-500 hover:bg-red-400" onClick={onDeleteDoctor}>
+							<Trash2 className="h-4 w-4" />
+						</Button>
+					) : (
+						<Button size="icon" className="bg-green-500 hover:bg-green-400" onClick={onRestoreDoctor}>
+							<ArchiveRestore className="h-4 w-4" />
+						</Button>
+					)}
 				</div>
 			);
 		}

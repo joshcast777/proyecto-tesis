@@ -246,33 +246,17 @@ function AppointmentView({ appointmentData: { date, nameDoctor, summary } }: App
 	);
 }
 
-function AnglesView({ angles: { elbow, shoulder, wrist } }: AnglesViewProps): React.ReactNode {
+function AnglesView({ angles: { elbow } }: AnglesViewProps): React.ReactNode {
 	const { jointAngle, jointAngles } = styles;
 
 	return (
 		<BoxView title="Ángulos">
 			<View style={jointAngles}>
 				<View style={jointAngle}>
-					<BoxView title="Hombro">
-						<DataView labelText="Derecho:" value={`${shoulder.right}°`} />
-
-						<DataView labelText="Izquierdo:" value={`${shoulder.left}°`} />
-					</BoxView>
-				</View>
-
-				<View style={jointAngle}>
 					<BoxView title="Codo">
 						<DataView labelText="Derecho:" value={`${elbow.right}°`} />
 
 						<DataView labelText="Izquierdo:" value={`${elbow.left}°`} />
-					</BoxView>
-				</View>
-
-				<View style={jointAngle}>
-					<BoxView title="Muñeca">
-						<DataView labelText="Derecho:" value={`${wrist.right}°`} />
-
-						<DataView labelText="Izquierdo:" value={`${wrist.left}°`} />
 					</BoxView>
 				</View>
 			</View>

@@ -210,10 +210,10 @@ export const patientStore = create<PatientStore>()(
 				"SET_TABLE_SIZE"
 			);
 		},
-		uploadImages: async (images: ImagesBlob[]): Promise<ImagesDownloadLink[]> => {
+		uploadImages: async (images: ImagesBlob[], type: string): Promise<ImagesDownloadLink[]> => {
 			const { currentPatient } = get();
 
-			const apiResponse: ApiResponse<ImagesDownloadLink[]> = await cloudinaryUploadImages(images, currentPatient.id);
+			const apiResponse: ApiResponse<ImagesDownloadLink[]> = await cloudinaryUploadImages(images, currentPatient.id, type);
 
 			return apiResponse.data!;
 		}

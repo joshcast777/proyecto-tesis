@@ -42,6 +42,21 @@ export const doctorStore = create<DoctorStore>()(
 
 			return "";
 		},
+		restoreDoctor: async (id: string): Promise<string> => {
+			const { doctors } = get();
+
+			const doctor: Doctor | undefined = doctors.find((doctor: Doctor): boolean => doctor.id === id);
+
+			doctor!.data.status = true;
+
+			const apiResponse: ApiResponse<null> = await firebaseDeleteDoctor(doctor!);
+
+			if (!apiResponse.success) {
+				return ErrorMessages.CouldNotCompleteTask;
+			}
+
+			return "";
+		},
 		getDoctor: async (id: string): Promise<string> => {
 			const apiResponse: ApiResponse<Doctor> = await firebaseGetDoctor(id);
 
