@@ -17,14 +17,6 @@ export const DefaultValues: DefaultValue = {
 		elbow: {
 			left: 0,
 			right: 0
-		},
-		shoulder: {
-			left: 0,
-			right: 0
-		},
-		wrist: {
-			left: 0,
-			right: 0
 		}
 	},
 	Appointment: {
@@ -35,14 +27,6 @@ export const DefaultValues: DefaultValue = {
 			nameDoctor: "",
 			angles: {
 				elbow: {
-					left: 0,
-					right: 0
-				},
-				shoulder: {
-					left: 0,
-					right: 0
-				},
-				wrist: {
 					left: 0,
 					right: 0
 				}

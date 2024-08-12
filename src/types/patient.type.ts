@@ -1,7 +1,7 @@
 import { Sex } from "@/enums";
 import { QueryDocumentSnapshot } from "firebase/firestore";
-import { Global } from "./global.type";
 import { Angles } from "./angles.type";
+import { Global } from "./global.type";
 
 export type PatientReferences = {
 	firstPatientDocumentSnapshot: null | QueryDocumentSnapshot;
@@ -45,7 +45,7 @@ export type Appointment = Global & {
 };
 
 export type AppointmentData = {
-	angles: Angles;
+	angles?: Angles;
 	date: Date;
 	estimatedImageLink: string;
 	idDoctor: string;
