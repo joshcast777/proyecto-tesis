@@ -282,7 +282,7 @@ export default function PatientPdf({ appointmentData, patientData }: PatientPdfP
 
 				<AppointmentView appointmentData={appointmentData} />
 
-				<AnglesView angles={appointmentData.angles} />
+				{appointmentData.angles !== undefined && <AnglesView angles={appointmentData.angles} />}
 			</Page>
 
 			<Page size="A4" style={page}>
